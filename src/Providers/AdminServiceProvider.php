@@ -6,6 +6,8 @@ use Encore\Admin\Routing\Router;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 
+// Comment to test if changes in my own project
+
 class AdminServiceProvider extends ServiceProvider
 {
     /**
