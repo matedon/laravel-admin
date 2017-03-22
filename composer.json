@@ -1,6 +1,5 @@
 {
-    "name": "matedon/laravel-admin",
-    "replaces": "encore/laravel-admin",
+    "name": "encore/laravel-admin",
     "description": "laravel admin",
     "type": "library",
     "keywords": ["laravel", "admin", "grid", "chart", "form"],
