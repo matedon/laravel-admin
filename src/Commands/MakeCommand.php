@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Admin\Commands;
+namespace MAteDon\Admin\Commands;
 
 use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -35,7 +35,7 @@ class MakeCommand extends GeneratorCommand
             return false;
         }
 
-        $this->type = $this->parseName($this->getNameInput());
+        //$this->type = $this->parseName($this->getNameInput());
 
         parent::fire();
     }

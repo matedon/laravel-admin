@@ -3,11 +3,11 @@
 namespace Tests\Controllers;
 
 use App\Http\Controllers\Controller;
-use Encore\Admin\Controllers\ModelForm;
-use Encore\Admin\Facades\Admin;
-use Encore\Admin\Form;
-use Encore\Admin\Grid;
-use Encore\Admin\Layout\Content;
+use MAteDon\Admin\Controllers\ModelForm;
+use MAteDon\Admin\Facades\Admin;
+use MAteDon\Admin\Form;
+use MAteDon\Admin\Grid;
+use MAteDon\Admin\Layout\Content;
 use Tests\Models\Image;
 
 class ImageController extends Controller

@@ -9,8 +9,8 @@ First define the tool class `app/Admin/Extensions/Tools/UserGender.php`：
 
 namespace App\Admin\Extensions\Tools;
 
-use Encore\Admin\Admin;
-use Encore\Admin\Grid\Tools\AbstractTool;
+use MAteDon\Admin\Admin;
+use MAteDon\Admin\Grid\Tools\AbstractTool;
 use Illuminate\Support\Facades\Request;
 
 class UserGender extends AbstractTool
@@ -98,7 +98,7 @@ First define the tool class `app/Admin/Extensions/Tools/ReleasePost.php`：
 
 namespace App\Admin\Extensions\Tools;
 
-use Encore\Admin\Grid\Tools\BatchAction;
+use MAteDon\Admin\Grid\Tools\BatchAction;
 
 class ReleasePost extends BatchAction
 {
@@ -185,7 +185,7 @@ Create a new export class, for example`app/Admin/Extensions/CustomExporter.php`�
 
 namespace App\Admin\Extensions;
 
-use Encore\Admin\Grid\Exporters\AbstractExporter;
+use MAteDon\Admin\Grid\Exporters\AbstractExporter;
 
 class CustomExporter extends AbstractExporter
 {

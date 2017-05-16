@@ -1,11 +1,18 @@
 <?php
 
-namespace Encore\Admin\Form\Field;
+namespace MAteDon\Admin\Form\Field;
 
-use Encore\Admin\Form\Field;
+use MAteDon\Admin\Form\Field;
 
 class Map extends Field
 {
+    /**
+     * Column name.
+     *
+     * @var string
+     */
+    protected $column = [];
+
     /**
      * Get assets required by this field.
      *

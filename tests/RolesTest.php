@@ -1,7 +1,7 @@
 <?php
 
-use Encore\Admin\Auth\Database\Administrator;
-use Encore\Admin\Auth\Database\Role;
+use MAteDon\Admin\Auth\Database\Administrator;
+use MAteDon\Admin\Auth\Database\Role;
 
 class RolesTest extends TestCase
 {
@@ -32,9 +32,11 @@ class RolesTest extends TestCase
     public function testAddRoleToUser()
     {
         $user = [
-            'username' => 'Test',
-            'name'     => 'Name',
-            'password' => '123456',
+            'username'              => 'Test',
+            'name'                  => 'Name',
+            'password'              => '123456',
+            'password_confirmation' => '123456',
+
         ];
 
         $this->visit('admin/auth/users/create')

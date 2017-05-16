@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Menu;
+namespace MAteDon\Admin\Menu;
 
-use Encore\Admin\Facades\Admin as AdminManager;
+use MAteDon\Admin\Facades\Admin as AdminManager;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Model;
 

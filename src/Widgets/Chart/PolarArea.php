@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Admin\Widgets\Chart;
+namespace MAteDon\Admin\Widgets\Chart;
 
 class PolarArea extends Pie
 {

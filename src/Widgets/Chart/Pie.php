@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Widgets\Chart;
+namespace MAteDon\Admin\Widgets\Chart;
 
-use Encore\Admin\Admin;
+use MAteDon\Admin\Admin;
 use Illuminate\Support\Arr;
 
 class Pie extends Chart

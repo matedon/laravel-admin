@@ -1,14 +1,11 @@
 <?php
 
-namespace Encore\Admin\Form\Field;
+namespace MAteDon\Admin\Form\Field;
 
-use Encore\Admin\Form\Field;
+use MAteDon\Admin\Form\Field;
 
 class SwitchField extends Field
 {
-    const STATE_ON = 1;
-    const STATE_OFF = 0;
-
     protected static $css = [
         '/packages/admin/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css',
     ];
@@ -17,48 +14,54 @@ class SwitchField extends Field
         '/packages/admin/bootstrap-switch/dist/js/bootstrap-switch.min.js',
     ];
 
-    protected $states = [];
+    protected $states = [
+        'null' => ['value' => null, 'text' => 'UNSET', 'color' => 'warning'],
+        'on'   => ['value' => 1, 'text' => 'ON', 'color' => 'primary'],
+        'off'  => ['value' => 0, 'text' => 'OFF', 'color' => 'default'],
+    ];
 
-    public function __construct($column, $arguments = [])
+    public function __construct($column, $arguments = [], $modelName = '')
     {
-        $this->initStates();
-
-        parent::__construct($column, $arguments);
-    }
-
-    protected function initStates()
-    {
-        $this->states = ['on' => static::STATE_ON, 'off' => static::STATE_OFF];
+        $this->states['on']['text'] = admin_translate($modelName, $this->states['on']['text']);
+        $this->states['off']['text'] = admin_translate($modelName, $this->states['off']['text']);
+        parent::__construct($column, $arguments, $modelName);
     }
 
     public function states($states = [])
     {
-        $this->states = $states;
+        foreach (array_dot($states) as $key => $state) {
+            array_set($this->states, $key, $state);
+        }
+
+        return $this;
     }
 
     public function prepare($value)
     {
         if (isset($this->states[$value])) {
-            return $this->states[$value];
+            return $this->states[$value]['value'];
         }
+
+        return $value;
     }
 
     public function render()
     {
-        $key = array_search($this->value, $this->states);
-
-        $this->value = ($key == 'on') ? 'on' : 'off';
-
-        $this->script = <<<EOT
-
-$('#{$this->id}_checkbox').bootstrapSwitch({
-    size:'small',
-    onSwitchChange: function(event, state) {
-        $('#{$this->id}').val(state ? 'on' : 'off');
-    }
-});;
-
-EOT;
+        $fieldValue = $this->value();
+        foreach ($this->states as $state => $option) {
+            if ($fieldValue === $option['value']) {
+                $this->value = $state;
+                break;
+            }
+        }
+        $this->setDataSet([
+            'size'          => 'small',
+            'onText'        => $this->states['on']['text'],
+            'offText'       => $this->states['off']['text'],
+            'onColor'       => $this->states['on']['color'],
+            'offColor'      => $this->states['off']['color'],
+            'indeterminate' => ($fieldValue === false ? true : false),
+        ]);
 
         return parent::render();
     }

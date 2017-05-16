@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Form\Field;
+namespace MAteDon\Admin\Form\Field;
 
-use Encore\Admin\Form\Field;
+use MAteDon\Admin\Form\Field;
 
 class Slider extends Field
 {
@@ -25,7 +25,7 @@ class Slider extends Field
     {
         $option = json_encode($this->options);
 
-        $this->script = "$('#{$this->id}').ionRangeSlider($option)";
+        $this->script = "$('{$this->getElementClassSelector()}').ionRangeSlider($option)";
 
         return parent::render();
     }

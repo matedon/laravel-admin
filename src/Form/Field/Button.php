@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Form\Field;
+namespace MAteDon\Admin\Form\Field;
 
-use Encore\Admin\Form\Field;
+use MAteDon\Admin\Form\Field;
 
 class Button extends Field
 {
@@ -19,7 +19,7 @@ class Button extends Field
     {
         $this->script = <<<EOT
 
-        $('#{$this->id}').on('$event', function() {
+        $('{$this->getElementClassSelector()}').on('$event', function() {
             $callback
         });
 

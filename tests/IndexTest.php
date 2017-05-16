@@ -1,6 +1,6 @@
 <?php
 
-use Encore\Admin\Auth\Database\Administrator;
+use MAteDon\Admin\Auth\Database\Administrator;
 
 class IndexTest extends TestCase
 {
@@ -35,7 +35,7 @@ class IndexTest extends TestCase
             ->see('Table')
             ->see('Email')
             ->see('Last Login')
-            ->see('Copyright')
+            ->see('Powered by')
             ->see('Version');
     }
 

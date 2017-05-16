@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Middleware;
+namespace MAteDon\Admin\Middleware;
 
-use Encore\Admin\Auth\Permission;
+use MAteDon\Admin\Auth\Permission;
 use Illuminate\Http\Request;
 
 class PermissionMiddleware
@@ -12,13 +12,12 @@ class PermissionMiddleware
      *
      * @param \Illuminate\Http\Request $request
      * @param \Closure                 $next
+     * @param array                    $args
      *
      * @return mixed
      */
-    public function handle(Request $request, \Closure $next)
+    public function handle(Request $request, \Closure $next, ...$args)
     {
-        $args = array_slice(func_get_args(), 2);
-
         if (count($args) > 1) {
             $type = array_shift($args);
 

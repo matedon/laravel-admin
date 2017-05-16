@@ -1,10 +1,11 @@
 <?php
 
-namespace Encore\Admin\Form\Field;
+namespace MAteDon\Admin\Form\Field;
 
-use Encore\Admin\Facades\Admin;
-use Encore\Admin\Form\Field;
+use MAteDon\Admin\Facades\Admin;
+use MAteDon\Admin\Form\Field;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Str;
 
 class Select extends Field
 {
@@ -16,15 +17,27 @@ class Select extends Field
         '/packages/admin/AdminLTE/plugins/select2/select2.full.min.js',
     ];
 
+    public function prepare($value)
+    {
+        if ($value === 'null') {
+            return null;
+        }
+        return $value;
+    }
+
     public function render()
     {
-        if (empty($this->script)) {
-            $this->script = "$(\"#{$this->id}\").select2({allowClear: true});";
-        }
+        $this->setDataSet([
+            'allowClear'  => 'true',
+            'placeholder' => $this->label,
+        ]);
 
-        if (is_callable($this->options)) {
-            $options = call_user_func($this->options, $this->value);
-            $this->options($options);
+        if ($this->options instanceof \Closure) {
+            if ($this->form) {
+                $this->options = $this->options->bindTo($this->form->model());
+            }
+
+            $this->options(call_user_func($this->options, $this->value));
         }
 
         $this->options = array_filter($this->options);
@@ -53,7 +66,7 @@ class Select extends Field
         if (is_callable($options)) {
             $this->options = $options;
         } else {
-            $this->options = (array) $options;
+            $this->options = (array)$options;
         }
 
         return $this;
@@ -62,45 +75,69 @@ class Select extends Field
     /**
      * Load options for other select on change.
      *
-     * @param $field
-     * @param $source
+     * @param string $field
+     * @param string $sourceUrl
+     * @param string $idField
+     * @param string $textField
+     *
+     * @return $this
      */
-    public function load($field, $source)
+    public function load($field, $sourceUrl, $idField = 'id', $textField = 'text')
     {
+        if (Str::contains($field, '.')) {
+            $field = $this->formatName($field);
+            $class = str_replace(['[', ']'], '_', $field);
+        } else {
+            $class = $field;
+        }
+
+        // TODO: move all js code to scripts/fields/select.js
+
         $script = <<<EOT
 
-$("#{$this->id}").change(function () {
-    $.get("$source?q="+this.value, function (data) {
-        $("#$field option").remove();
-        $("#$field").select2({data: data});
+$(document).on('change', "{$this->getElementClassSelector()}", function () {
+    var target = $(this).closest('.fields-group').find(".$class");
+    $.get("$sourceUrl?q="+this.value, function (data) {
+        target.find("option").remove();
+        $(target).select2({
+            data: $.map(data, function (d) {
+                d.id = d.$idField;
+                d.text = d.$textField;
+                return d;
+            })
+        }).trigger('change');
     });
 });
 EOT;
 
         Admin::script($script);
+
+        return $this;
     }
 
     /**
      * Load options from remote.
      *
      * @param string $url
-     * @param array  $parameters
-     * @param array  $options
+     * @param array $parameters
+     * @param array $options
      *
      * @return $this
      */
     protected function loadOptionsFromRemote($url, $parameters = [], $options = [])
     {
         $ajaxOptions = [
-            'url' => $url.'?'.http_build_query($parameters),
+            'url' => $url . '?' . http_build_query($parameters),
         ];
 
         $ajaxOptions = json_encode(array_merge($ajaxOptions, $options));
 
+        // TODO: move all js code to scripts/fields/select.js
+
         $this->script = <<<EOT
 
 $.ajax($ajaxOptions).done(function(data) {
-  $("#{$this->id}").select2({data: data});
+  $("{$this->getElementClassSelector()}").select2({data: data});
 });
 
 EOT;
@@ -112,14 +149,18 @@ EOT;
      * Load options from ajax results.
      *
      * @param string $url
+     * @param $idField
+     * @param $textField
      *
      * @return $this
      */
-    public function ajax($url)
+    public function ajax($url, $idField = 'id', $textField = 'text')
     {
+        // TODO: move all js code to scripts/fields/select.js
+
         $this->script = <<<EOT
 
-$("#{$this->id}").select2({
+$("{$this->getElementClassSelector()}").select2({
   ajax: {
     url: "$url",
     dataType: 'json',
@@ -134,7 +175,11 @@ $("#{$this->id}").select2({
       params.page = params.page || 1;
 
       return {
-        results: data.data,
+        results: $.map(data.data, function (d) {
+                   d.id = d.$idField;
+                   d.text = d.$textField;
+                   return d;
+                }),
         pagination: {
           more: data.next_page_url
         }

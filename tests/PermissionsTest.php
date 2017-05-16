@@ -1,8 +1,8 @@
 <?php
 
-use Encore\Admin\Auth\Database\Administrator;
-use Encore\Admin\Auth\Database\Permission;
-use Encore\Admin\Auth\Database\Role;
+use MAteDon\Admin\Auth\Database\Administrator;
+use MAteDon\Admin\Auth\Database\Permission;
+use MAteDon\Admin\Auth\Database\Role;
 
 class PermissionsTest extends TestCase
 {
@@ -81,9 +81,10 @@ class PermissionsTest extends TestCase
     public function testAddUserAndAssignPermission()
     {
         $user = [
-            'username' => 'Test',
-            'name'     => 'Name',
-            'password' => '123456',
+            'username'              => 'Test',
+            'name'                  => 'Name',
+            'password'              => '123456',
+            'password_confirmation' => '123456',
         ];
 
         $this->visit('admin/auth/users/create')
@@ -139,9 +140,10 @@ class PermissionsTest extends TestCase
     public function testPermissionThroughRole()
     {
         $user = [
-            'username' => 'Test',
-            'name'     => 'Name',
-            'password' => '123456',
+            'username'              => 'Test',
+            'name'                  => 'Name',
+            'password'              => '123456',
+            'password_confirmation' => '123456',
         ];
 
         // 1.add a user

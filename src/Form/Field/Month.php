@@ -1,10 +1,8 @@
 <?php
 
-namespace Encore\Admin\Form\Field;
+namespace MAteDon\Admin\Form\Field;
 
 class Month extends Date
 {
     protected $format = 'MM';
-
-    protected $view = 'admin::form.date';
 }

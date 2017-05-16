@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Middleware;
+namespace MAteDon\Admin\Middleware;
 
-use Encore\Admin\Facades\Admin;
+use MAteDon\Admin\Facades\Admin;
 use Illuminate\Http\Request;
 
 class OperationLog
@@ -17,7 +17,7 @@ class OperationLog
      */
     public function handle(Request $request, \Closure $next)
     {
-        if (Admin::user()) {
+        if (config('admin.operation_log') && Admin::user()) {
             $log = [
                 'user_id' => Admin::user()->id,
                 'path'    => $request->path(),
@@ -26,7 +26,7 @@ class OperationLog
                 'input'   => json_encode($request->input()),
             ];
 
-            \Encore\Admin\Auth\Database\OperationLog::create($log);
+            \MAteDon\Admin\Auth\Database\OperationLog::create($log);
         }
 
         return $next($request);

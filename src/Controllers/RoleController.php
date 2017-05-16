@@ -1,13 +1,13 @@
 <?php
 
-namespace Encore\Admin\Controllers;
+namespace MAteDon\Admin\Controllers;
 
-use Encore\Admin\Auth\Database\Permission;
-use Encore\Admin\Auth\Database\Role;
-use Encore\Admin\Facades\Admin;
-use Encore\Admin\Form;
-use Encore\Admin\Grid;
-use Encore\Admin\Layout\Content;
+use MAteDon\Admin\Auth\Database\Permission;
+use MAteDon\Admin\Auth\Database\Role;
+use MAteDon\Admin\Facades\Admin;
+use MAteDon\Admin\Form;
+use MAteDon\Admin\Grid;
+use MAteDon\Admin\Layout\Content;
 use Illuminate\Routing\Controller;
 
 class RoleController extends Controller
@@ -73,13 +73,17 @@ class RoleController extends Controller
             $grid->created_at(trans('admin::lang.created_at'));
             $grid->updated_at(trans('admin::lang.updated_at'));
 
-            $grid->rows(function ($row) {
-                if ($row->slug == 'administrator') {
-                    $row->actions('edit');
+            $grid->actions(function (Grid\Displayers\Actions $actions) {
+                if ($actions->row->slug == 'administrator') {
+                    $actions->disableDelete();
                 }
             });
 
-            $grid->disableBatchDeletion();
+            $grid->tools(function (Grid\Tools $tools) {
+                $tools->batch(function (Grid\Tools\BatchActions $actions) {
+                    $actions->disableDelete();
+                });
+            });
         });
     }
 

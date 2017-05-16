@@ -4,23 +4,23 @@ First, install laravel, and make sure that the database connection settings are 
 
 ```
 Laravel 5.1, not maintained
-composer require encore/laravel-admin "1.1.*"
+composer require matedon/laravel-admin "1.1.*"
 
 Laravel 5.2
-composer require encore/laravel-admin "1.2.*"
+composer require matedon/laravel-admin "1.2.*"
 
 Laravel 5.3
-composer require encore/laravel-admin "1.3.*"
+composer require matedon/laravel-admin "1.3.*"
 
 Laravel 5.4
-composer require encore/laravel-admin "1.4.*"
+composer require matedon/laravel-admin "1.4.*"
 
 ```
 
 In`config/app.php`add`ServiceProvider`:
 
 ```
-Encore\Admin\Providers\AdminServiceProvider::class
+MAteDon\Admin\Providers\AdminServiceProvider::class
 ```
 
 Then run these commands to publish assets and config：

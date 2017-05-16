@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Commands;
+namespace MAteDon\Admin\Commands;
 
-use Encore\Admin\Facades\Admin;
+use MAteDon\Admin\Facades\Admin;
 use Illuminate\Console\Command;
 
 class MenuCommand extends Command

@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Form\Field;
+namespace MAteDon\Admin\Form\Field;
 
-use Encore\Admin\Form\Field;
+use MAteDon\Admin\Form\Field;
 
 class Textarea extends Field
 {
@@ -11,7 +11,7 @@ class Textarea extends Field
      *
      * @var int
      */
-    protected $rows = 10;
+    protected $rows = 5;
 
     /**
      * Set rows of textarea.
@@ -20,7 +20,7 @@ class Textarea extends Field
      *
      * @return $this
      */
-    public function rows($rows = 10)
+    public function rows($rows = 5)
     {
         $this->rows = $rows;
 

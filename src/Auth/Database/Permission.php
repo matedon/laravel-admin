@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Admin\Auth\Database;
+namespace MAteDon\Admin\Auth\Database;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,6 +33,8 @@ class Permission extends Model
     {
         $pivotTable = config('admin.database.role_permissions_table');
 
-        return $this->belongsToMany(Role::class, $pivotTable, 'permission_id', 'role_id');
+        $relatedModel = config('admin.database.roles_model');
+
+        return $this->belongsToMany($relatedModel, $pivotTable, 'permission_id', 'role_id');
     }
 }

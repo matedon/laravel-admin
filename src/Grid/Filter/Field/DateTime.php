@@ -1,29 +1,30 @@
 <?php
 
-namespace Encore\Admin\Grid\Filter\Field;
+namespace MAteDon\Admin\Grid\Filter\Field;
 
-use Encore\Admin\Admin;
+use MAteDon\Admin\Admin;
 
 class DateTime
 {
     /**
-     * @var \Encore\Admin\Grid\Filter\AbstractFilter
+     * @var \MAteDon\Admin\Grid\Filter\AbstractFilter
      */
     protected $filter;
 
-    public function __construct($filter)
+    protected $options = [];
+
+    public function __construct($filter, array $options = [])
     {
         $this->filter = $filter;
+
+        $this->options = $this->checkOptions($options);
 
         $this->prepare();
     }
 
     public function prepare()
     {
-        $options['format'] = 'YYYY-MM-DD HH:mm:ss';
-        $options['locale'] = config('app.locale');
-
-        $script = "$('#{$this->filter->getId()}').datetimepicker(".json_encode($options).');';
+        $script = "$('#{$this->filter->getId()}').datetimepicker(".json_encode($this->options).');';
 
         Admin::script($script);
     }
@@ -36,5 +37,13 @@ class DateTime
     public function name()
     {
         return 'datetime';
+    }
+
+    protected function checkOptions($options)
+    {
+        $options['format'] = array_get($options, 'format', 'YYYY-MM-DD HH:mm:ss');
+        $options['locale'] = array_get($options, 'locale', config('app.locale'));
+
+        return $options;
     }
 }

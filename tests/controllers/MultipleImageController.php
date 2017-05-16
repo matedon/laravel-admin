@@ -3,11 +3,11 @@
 namespace Tests\Controllers;
 
 use App\Http\Controllers\Controller;
-use Encore\Admin\Controllers\ModelForm;
-use Encore\Admin\Facades\Admin;
-use Encore\Admin\Form;
-use Encore\Admin\Grid;
-use Encore\Admin\Layout\Content;
+use MAteDon\Admin\Controllers\ModelForm;
+use MAteDon\Admin\Facades\Admin;
+use MAteDon\Admin\Form;
+use MAteDon\Admin\Grid;
+use MAteDon\Admin\Layout\Content;
 use Tests\Models\MultipleImage;
 
 class MultipleImageController extends Controller
@@ -87,7 +87,7 @@ class MultipleImageController extends Controller
         return Admin::form(MultipleImage::class, function (Form $form) {
             $form->display('id', 'ID');
 
-            $form->image('pictures')->multiple();
+            $form->multipleImage('pictures');
 
             $form->display('created_at', 'Created At');
             $form->display('updated_at', 'Updated At');

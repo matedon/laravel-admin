@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Admin\Grid;
+namespace MAteDon\Admin\Grid;
 
 class Row
 {
@@ -26,27 +26,6 @@ class Row
     protected $attributes = [];
 
     /**
-     * Actions of row.
-     *
-     * @var
-     */
-    protected $actions;
-
-    /**
-     * The primary key name.
-     *
-     * @var string
-     */
-    protected $keyName = 'id';
-
-    /**
-     * Action path.
-     *
-     * @var
-     */
-    protected $path;
-
-    /**
      * Constructor.
      *
      * @param $number
@@ -60,43 +39,25 @@ class Row
     }
 
     /**
-     * Set primary key name.
-     *
-     * @param $keyName
-     */
-    public function setKeyName($keyName)
-    {
-        $this->keyName = $keyName;
-    }
-
-    /**
-     * Set action path.
-     *
-     * @param $path
-     */
-    public function setPath($path)
-    {
-        $this->path = $path;
-    }
-
-    /**
-     * Get action path.
+     * Get the value of the model's primary key.
      *
      * @return mixed
      */
-    public function getPath()
+    public function getKey()
     {
-        return $this->path;
+        return $this->model->getKey();
     }
 
     /**
-     * Get id of this row.
+     * Get the value of the model's primary key.
      *
-     * @return null
+     * @return mixed
+     *
+     * @deprecated Use `getKey()` instead.
      */
     public function id()
     {
-        return $this->__get($this->keyName);
+        return $this->getKey();
     }
 
     /**
@@ -104,10 +65,38 @@ class Row
      *
      * @return string
      */
-    public function getHtmlAttributes()
+    public function getRowAttributes()
+    {
+        return $this->formatHtmlAttribute($this->attributes);
+    }
+
+    /**
+     * Get column attributes.
+     *
+     * @param string $column
+     *
+     * @return string
+     */
+    public function getColumnAttributes($column)
+    {
+        if ($attributes = Column::getAttributes($column)) {
+            return $this->formatHtmlAttribute($attributes);
+        }
+
+        return '';
+    }
+
+    /**
+     * Format attributes to html.
+     *
+     * @param array $attributes
+     *
+     * @return string
+     */
+    private function formatHtmlAttribute($attributes = [])
     {
         $attrArr = [];
-        foreach ($this->attributes as $name => $val) {
+        foreach ($attributes as $name => $val) {
             $attrArr[] = "$name=\"$val\"";
         }
 
@@ -145,31 +134,11 @@ class Row
     }
 
     /**
-     * Set or Get actions.
-     *
-     * @param string $actions
-     *
-     * @return Action
-     */
-    public function actions($actions = 'edit|delete')
-    {
-        if (!is_null($this->actions)) {
-            return $this->actions;
-        }
-
-        $this->actions = new Action($actions);
-
-        $this->actions->setRow($this);
-
-        return $this->actions;
-    }
-
-    /**
      * Get data of this row.
      *
      * @return mixed
      */
-    public function cells()
+    public function model()
     {
         return $this->data;
     }
@@ -199,7 +168,7 @@ class Row
         if (is_null($value)) {
             $column = array_get($this->data, $name);
 
-            return is_string($column) ? $column : var_export($column, true);
+            return $this->dump($column);
         }
 
         if (is_callable($value)) {
@@ -210,5 +179,21 @@ class Row
         array_set($this->data, $name, $value);
 
         return $this;
+    }
+
+    /**
+     * Dump output column vars.
+     *
+     * @param mixed $var
+     *
+     * @return mixed|string
+     */
+    protected function dump($var)
+    {
+        if (!is_scalar($var)) {
+            return '<pre>'.var_export($var, true).'</pre>';
+        }
+
+        return $var;
     }
 }
