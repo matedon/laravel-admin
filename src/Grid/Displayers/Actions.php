@@ -122,7 +122,9 @@ class Actions extends AbstractDisplayer
 
         $actions = array_merge($actions, $this->appends);
 
-        return implode('', $actions);
+        return view('admin::actions.container', [
+            'actions' => $actions
+        ])->render();
     }
 
     /**

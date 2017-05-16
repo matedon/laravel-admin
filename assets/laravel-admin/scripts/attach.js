@@ -33,7 +33,7 @@
     var parentObject
     if (parent instanceof $) {
       parentObject = parent.get(0)
-    } else if (typeof parent == 'string') {
+    } else if (typeof parent === 'string') {
       parentObject = $(parent).get(0)
     } else {
       parentObject = parent
