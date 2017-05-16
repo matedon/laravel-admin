@@ -1,6 +1,6 @@
 {
   "name": "matedon/laravel-admin",
-  "description": "laravel admin",
+  "description": "Administrative interface builder for Laravel PHP Framework which can help you build CRUD backends just with few lines of code.",
   "type": "library",
   "keywords": [
     "laravel",

@@ -9,7 +9,7 @@ laravel-admin
 
 This project based on the job of [z-song/laravel-admin](https://github.com/z-song/laravel-admin)
 
-`laravel-admin` is administrative interface builder for laravel which can help you build CRUD backends just with few lines of code.
+The `laravel-admin` is an administrative interface builder for Laravel PHP Framework which can help you build CRUD backends just with few lines of code.
 
 Z-song admin has a [Demo](http://120.26.143.106/admin) use `username/password:admin/admin`
 
