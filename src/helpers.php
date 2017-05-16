@@ -80,7 +80,14 @@ if (!function_exists('admin_translate')) {
          * ExampleString with banana => example_string_with_banana
          */
         $columnLower = ltrim(strtolower(preg_replace('/[A-Z ]([A-Z](?![a-z]))*/', '_$0', $column)), '_');
-        $columnLower = str_replace(' ', '', $columnLower);
+        /*
+         * example_  string _with_banana => example_string_with_banana
+         */
+        $columnLower = preg_replace('!\s+!', '', $columnLower);
+        /*
+         * example__sring_____with_banana => example_string_with_banana
+         */
+        $columnLower = preg_replace('!_+!', '_', $columnLower);
         /*
          * The possible translate keys in priority order.
          */
