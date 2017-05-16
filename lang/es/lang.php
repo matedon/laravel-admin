@@ -37,9 +37,9 @@ return [
     'input'            => 'Entrada',
     'succeeded'        => 'Exitoso',
     'failed'           => 'Fallido',
-    'delete_confirm'   => '¿ Esta seguro de eliminar este ítem ?',
-    'delete_succeeded' => 'Eliminación exitosa !',
-    'delete_failed'    => 'Eliminación fallida !',
+    'delete_confirm'   => '¿ Esta seguro de eliminar este ítem?',
+    'delete_succeeded' => 'Eliminación exitosa!',
+    'delete_failed'    => 'Eliminación fallida!',
 
     'choose'        => 'Escoger',
     'choose_file'   => 'Escoger archivo',

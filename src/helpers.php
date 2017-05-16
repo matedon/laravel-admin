@@ -102,3 +102,25 @@ if (!function_exists('admin_translate')) {
         return (string)$label;
     }
 }
+
+if (!function_exists('composer_json')) {
+    /**
+     * Read variables from the vendor project's composer.json file.
+     *
+     * @param $key
+     * @return mixed
+     */
+    function composer_json($key = null)
+    {
+        $path = realpath(dirname(__FILE__)) . '/../composer.json';
+        if (file_exists($path)) {
+            $composer = json_decode(file_get_contents($path), true);
+            if (is_null($key)) {
+                return $composer;
+            }
+            if (isset($composer[$key])) {
+                return $composer[$key];
+            }
+        }
+    }
+}

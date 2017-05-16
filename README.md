@@ -11,7 +11,7 @@ This project based on the job of [z-song/laravel-admin](https://github.com/z-son
 
 `laravel-admin` is administrative interface builder for laravel which can help you build CRUD backends just with few lines of code.
 
-Z-song admin has a[Demo](http://120.26.143.106/admin) use `username/password:admin/admin`
+Z-song admin has a [Demo](http://120.26.143.106/admin) use `username/password:admin/admin`
 
 Inspired by [SleepingOwlAdmin](https://github.com/sleeping-owl/admin) and [rapyd-laravel](https://github.com/zofe/rapyd-laravel).
 

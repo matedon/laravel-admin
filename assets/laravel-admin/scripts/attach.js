@@ -6,12 +6,12 @@
     var child
     var event
     var opts
-    if (typeof b == 'function') {
+    if (typeof b === 'function') {
       parent = document.body
       child = a
       event = b
       opts = c
-    } else if (typeof c == 'function') {
+    } else if (typeof c === 'function') {
       parent = a
       child = b
       event = c
@@ -40,8 +40,7 @@
     }
     const $parent = $(parentObject)
     const executeHandler = function () {
-      var $all = $(this).find(child)
-      $all.each(function () {
+      $(this).find(child).each(function () {
         var data = $(this).data()
         if (!data[eventName]) {
           data[eventName] = true
@@ -49,15 +48,9 @@
         }
       })
     }
-    const timer = [];
     const observer = new MutationObserver(function (mutations) {
       mutations.forEach(function (mutation) {
-        if (timer[mutation.target]) {
-          clearTimeout(timer[mutation.target])
-        }
-        timer[mutation.target] = setTimeout(function () {
-          executeHandler.call(mutation.target)
-        }, 100)
+        executeHandler.call(mutation.target)
       })
     })
     observer.observe(parentObject, config.observe)

@@ -8,7 +8,6 @@
       event: 'click',
       confirm: 'Are you sure?'
     }, dataSet)
-    console.log(options)
     var deleteHandler = function (ev) {
       ev.preventDefault()
       if (confirm(options.confirm)) {
