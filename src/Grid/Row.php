@@ -191,7 +191,7 @@ class Row
     protected function dump($var)
     {
         if (!is_scalar($var)) {
-            return '<pre>'.var_export($var, true).'</pre>';
+            return '<span class="label label-default">'.var_export($var, true).'</span>';
         }
 
         return $var;

@@ -53,7 +53,7 @@ class Text extends Field
             $valueAttribute = old($this->column, $this->value());
         }
 
-        $this->prepend('<i class="fa ' . $this->icon . '"></i>')
+        $this->prepend('<i class="fa fa-fw ' . $this->icon . '"></i>')
             ->defaultAttribute('type', 'text')
             ->defaultAttribute('id', $this->id)
             ->defaultAttribute('name', $this->elementName ?: $this->formatName($this->column))

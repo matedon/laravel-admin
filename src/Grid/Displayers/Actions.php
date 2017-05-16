@@ -132,11 +132,9 @@ class Actions extends AbstractDisplayer
      */
     protected function editAction()
     {
-        return <<<EOT
-<a href="{$this->getResource()}/{$this->getKey()}/edit">
-    <i class="fa fa-edit"></i>
-</a>
-EOT;
+        return view('admin::actions.edit', [
+            'href' => $this->getResource() . '/' . $this->getKey() . '/edit'
+        ])->render();
     }
 
     /**
@@ -146,42 +144,11 @@ EOT;
      */
     protected function deleteAction()
     {
-        $confirm = trans('admin::lang.delete_confirm');
-
-        $script = <<<SCRIPT
-
-$('.grid-row-delete').unbind('click').click(function() {
-    if(confirm("{$confirm}")) {
-        $.ajax({
-            method: 'post',
-            url: '{$this->getResource()}/' + $(this).data('id'),
-            data: {
-                _method:'delete',
-                _token:LA.token,
-            },
-            success: function (data) {
-                $.pjax.reload('#pjax-container');
-
-                if (typeof data === 'object') {
-                    if (data.status) {
-                        toastr.success(data.message);
-                    } else {
-                        toastr.error(data.message);
-                    }
-                }
-            }
-        });
-    }
-});
-
-SCRIPT;
-
-        Admin::script($script);
-
-        return <<<EOT
-<a href="javascript:void(0);" data-id="{$this->getKey()}" class="grid-row-delete">
-    <i class="fa fa-trash"></i>
-</a>
-EOT;
+        return view('admin::actions.delete', [
+            'href' => $this->getResource() . '/' . $this->getKey(),
+            'data' => [
+                'confirm' => trans('admin::lang.delete_confirm')
+            ]
+        ])->render();
     }
 }
