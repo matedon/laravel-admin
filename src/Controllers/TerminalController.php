@@ -1,9 +1,9 @@
 <?php
 
-namespace Encore\Admin\Controllers;
+namespace MAteDon\Admin\Controllers;
 
-use Encore\Admin\Facades\Admin;
-use Encore\Admin\Layout\Content;
+use MAteDon\Admin\Facades\Admin;
+use MAteDon\Admin\Layout\Content;
 use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Routing\Controller;

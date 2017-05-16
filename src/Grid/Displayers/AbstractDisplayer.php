@@ -1,9 +1,9 @@
 <?php
 
-namespace Encore\Admin\Grid\Displayers;
+namespace MAteDon\Admin\Grid\Displayers;
 
-use Encore\Admin\Grid;
-use Encore\Admin\Grid\Column;
+use MAteDon\Admin\Grid;
+use MAteDon\Admin\Grid\Column;
 
 abstract class AbstractDisplayer
 {

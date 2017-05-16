@@ -1,9 +1,9 @@
 <?php
 
-namespace Encore\Admin\Grid;
+namespace MAteDon\Admin\Grid;
 
-use Encore\Admin\Grid;
-use Encore\Admin\Grid\Exporters\CsvExporter;
+use MAteDon\Admin\Grid;
+use MAteDon\Admin\Grid\Exporters\CsvExporter;
 
 class Exporter
 {

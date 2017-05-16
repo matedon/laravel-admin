@@ -1,9 +1,9 @@
 <?php
 
-namespace Encore\Admin\Grid\Filter\Field;
+namespace MAteDon\Admin\Grid\Filter\Field;
 
-use Encore\Admin\Facades\Admin;
-use Encore\Admin\Grid\Filter\AbstractFilter;
+use MAteDon\Admin\Facades\Admin;
+use MAteDon\Admin\Grid\Filter\AbstractFilter;
 use Illuminate\Contracts\Support\Arrayable;
 
 class Select

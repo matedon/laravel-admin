@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Admin\Widgets;
+namespace MAteDon\Admin\Widgets;
 
 use Illuminate\Contracts\Support\Renderable;
 

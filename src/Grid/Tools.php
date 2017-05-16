@@ -1,11 +1,11 @@
 <?php
 
-namespace Encore\Admin\Grid;
+namespace MAteDon\Admin\Grid;
 
-use Encore\Admin\Grid;
-use Encore\Admin\Grid\Tools\AbstractTool;
-use Encore\Admin\Grid\Tools\BatchActions;
-use Encore\Admin\Grid\Tools\RefreshButton;
+use MAteDon\Admin\Grid;
+use MAteDon\Admin\Grid\Tools\AbstractTool;
+use MAteDon\Admin\Grid\Tools\BatchActions;
+use MAteDon\Admin\Grid\Tools\RefreshButton;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\Collection;
 

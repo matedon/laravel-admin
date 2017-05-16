@@ -2,7 +2,7 @@
 
 The layout usage of `laravel-admin` can be found in the `index()` method of the home page's layout file [HomeController.php](/src/Commands/stubs/ExampleController.stub).
 
-The `Encore\Admin\Layout\Content` class is used to implement the layout of the content area. The `Content::row ($element)` method is used to add a row element:
+The `MAteDon\Admin\Layout\Content` class is used to implement the layout of the content area. The `Content::row ($element)` method is used to add a row element:
 
 ```php
 // Add text
@@ -14,7 +14,7 @@ $content->row(new Box('title', 'xxxx'));
 
 ```
 
-The `Encore\Admin\Layout\Row` class is used for layout of inline elements. The `Row::column($width, $element)` method is used to add columns in a row:
+The `MAteDon\Admin\Layout\Row` class is used for layout of inline elements. The `Row::column($width, $element)` method is used to add columns in a row:
 
 ```php
 // Add columns in the row

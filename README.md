@@ -4,16 +4,16 @@ laravel-admin
 [![Build Status](https://travis-ci.org/z-song/laravel-admin.svg?branch=master)](https://travis-ci.org/z-song/laravel-admin)
 [![StyleCI](https://styleci.io/repos/48796179/shield)](https://styleci.io/repos/48796179)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/z-song/laravel-admin/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/z-song/laravel-admin/?branch=master)
-[![Packagist](https://img.shields.io/packagist/l/encore/laravel-admin.svg?maxAge=2592000)](https://packagist.org/packages/encore/laravel-admin)
-[![Total Downloads](https://img.shields.io/packagist/dt/encore/laravel-admin.svg?style=flat-square)](https://packagist.org/packages/encore/laravel-admin)
+[![Packagist](https://img.shields.io/packagist/l/matedon/laravel-admin.svg?maxAge=2592000)](https://packagist.org/packages/matedon/laravel-admin)
+[![Total Downloads](https://img.shields.io/packagist/dt/matedon/laravel-admin.svg?style=flat-square)](https://packagist.org/packages/matedon/laravel-admin)
+
+This project based on the job of [z-song/laravel-admin](https://github.com/z-song/laravel-admin)
 
 `laravel-admin` is administrative interface builder for laravel which can help you build CRUD backends just with few lines of code.
 
-[Demo](http://120.26.143.106/admin) use `username/password:admin/admin`
+Z-song admin has a[Demo](http://120.26.143.106/admin) use `username/password:admin/admin`
 
 Inspired by [SleepingOwlAdmin](https://github.com/sleeping-owl/admin) and [rapyd-laravel](https://github.com/zofe/rapyd-laravel).
-
-[中文文档](/docs/zh/README.md)
 
 Screenshots
 ------------
@@ -27,19 +27,19 @@ First, install laravel, and make sure that the database connection settings are 
 
 ```
 Laravel 5.2
-composer require encore/laravel-admin "dev-master"
+composer require matedon/laravel-admin "dev-master"
 
 Laravel 5.3
-composer require encore/laravel-admin "1.3.x-dev"
+composer require matedon/laravel-admin "1.3.x-dev"
 
 Laravel 5.1
-composer require encore/laravel-admin "1.1.x-dev"
+composer require matedon/laravel-admin "1.1.x-dev"
 ```
 
 In`config/app.php`add`ServiceProvider`:
 
 ```
-Encore\Admin\Providers\AdminServiceProvider::class
+MAteDon\Admin\Providers\AdminServiceProvider::class
 ```
 
 Then run these commands to finnish install：

@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Form;
+namespace MAteDon\Admin\Form;
 
-use Encore\Admin\Form;
+use MAteDon\Admin\Form;
 use Illuminate\Support\Collection;
 
 class Tab

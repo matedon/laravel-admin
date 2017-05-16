@@ -1,10 +1,10 @@
 <?php
 
-namespace Encore\Admin\Grid\Displayers;
+namespace MAteDon\Admin\Grid\Displayers;
 
-use Encore\Admin\Admin;
-use Encore\Admin\Grid;
-use Encore\Admin\Grid\Column;
+use MAteDon\Admin\Admin;
+use MAteDon\Admin\Grid;
+use MAteDon\Admin\Grid\Column;
 
 class SwitchDisplay extends AbstractDisplayer
 {

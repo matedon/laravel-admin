@@ -1,11 +1,11 @@
 <?php
 
-namespace Encore\Admin;
+namespace MAteDon\Admin;
 
 use Closure;
-use Encore\Admin\Auth\Database\Menu;
-use Encore\Admin\Layout\Content;
-use Encore\Admin\Widgets\Navbar;
+use MAteDon\Admin\Auth\Database\Menu;
+use MAteDon\Admin\Layout\Content;
+use MAteDon\Admin\Widgets\Navbar;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -41,7 +41,7 @@ class Admin
      * @param $model
      * @param Closure $callable
      *
-     * @return \Encore\Admin\Grid
+     * @return \MAteDon\Admin\Grid
      */
     public function grid($model, Closure $callable)
     {
@@ -52,7 +52,7 @@ class Admin
      * @param $model
      * @param Closure $callable
      *
-     * @return \Encore\Admin\Form
+     * @return \MAteDon\Admin\Form
      */
     public function form($model, Closure $callable)
     {
@@ -64,7 +64,7 @@ class Admin
      *
      * @param $model
      *
-     * @return \Encore\Admin\Tree
+     * @return \MAteDon\Admin\Tree
      */
     public function tree($model, Closure $callable = null)
     {
@@ -74,7 +74,7 @@ class Admin
     /**
      * @param Closure $callable
      *
-     * @return \Encore\Admin\Layout\Content
+     * @return \MAteDon\Admin\Layout\Content
      */
     public function content(Closure $callable = null)
     {
@@ -235,7 +235,7 @@ class Admin
     /**
      * Get navbar object.
      *
-     * @return \Encore\Admin\Widgets\Navbar
+     * @return \MAteDon\Admin\Widgets\Navbar
      */
     public function getNavbar()
     {
@@ -250,7 +250,7 @@ class Admin
     {
         $attributes = [
             'prefix'        => config('admin.prefix'),
-            'namespace'     => 'Encore\Admin\Controllers',
+            'namespace'     => 'MAteDon\Admin\Controllers',
             'middleware'    => ['web', 'admin'],
         ];
 
@@ -284,12 +284,12 @@ class Admin
         Route::group($attributes, function ($router) {
 
             /* @var \Illuminate\Routing\Router $router */
-            $router->get('terminal/database', 'Encore\Admin\Controllers\TerminalController@database');
-            $router->post('terminal/database', 'Encore\Admin\Controllers\TerminalController@runDatabase');
-            $router->get('terminal/artisan', 'Encore\Admin\Controllers\TerminalController@artisan');
-            $router->post('terminal/artisan', 'Encore\Admin\Controllers\TerminalController@runArtisan');
-            $router->get('scaffold', 'Encore\Admin\Controllers\ScaffoldController@index');
-            $router->post('scaffold', 'Encore\Admin\Controllers\ScaffoldController@store');
+            $router->get('terminal/database', 'MAteDon\Admin\Controllers\TerminalController@database');
+            $router->post('terminal/database', 'MAteDon\Admin\Controllers\TerminalController@runDatabase');
+            $router->get('terminal/artisan', 'MAteDon\Admin\Controllers\TerminalController@artisan');
+            $router->post('terminal/artisan', 'MAteDon\Admin\Controllers\TerminalController@runArtisan');
+            $router->get('scaffold', 'MAteDon\Admin\Controllers\ScaffoldController@index');
+            $router->post('scaffold', 'MAteDon\Admin\Controllers\ScaffoldController@store');
         });
     }
 }

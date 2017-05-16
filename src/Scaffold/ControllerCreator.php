@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Admin\Scaffold;
+namespace MAteDon\Admin\Scaffold;
 
 class ControllerCreator
 {

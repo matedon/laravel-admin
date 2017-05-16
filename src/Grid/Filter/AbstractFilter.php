@@ -1,11 +1,11 @@
 <?php
 
-namespace Encore\Admin\Grid\Filter;
+namespace MAteDon\Admin\Grid\Filter;
 
-use Encore\Admin\Grid\Filter;
-use Encore\Admin\Grid\Filter\Field\DateTime;
-use Encore\Admin\Grid\Filter\Field\Select;
-use Encore\Admin\Grid\Filter\Field\Text;
+use MAteDon\Admin\Grid\Filter;
+use MAteDon\Admin\Grid\Filter\Field\DateTime;
+use MAteDon\Admin\Grid\Filter\Field\Select;
+use MAteDon\Admin\Grid\Filter\Field\Text;
 
 abstract class AbstractFilter
 {

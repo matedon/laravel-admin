@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Admin\Grid\Displayers;
+namespace MAteDon\Admin\Grid\Displayers;
 
 class Button extends AbstractDisplayer
 {

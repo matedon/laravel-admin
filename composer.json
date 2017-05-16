@@ -1,9 +1,9 @@
 {
-    "name": "encore/laravel-admin",
+    "name": "matedon/laravel-admin",
     "description": "laravel admin",
     "type": "library",
     "keywords": ["laravel", "admin", "grid", "chart", "form"],
-    "homepage": "https://github.com/z-song/laravel-admin",
+    "homepage": "https://github.com/matedon/laravel-admin",
     "license": "MIT",
     "authors": [
         {
@@ -30,7 +30,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Encore\\Admin\\": "src/"
+            "MAteDon\\Admin\\": "src/"
         },
         "files": [
             "src/helpers.php"

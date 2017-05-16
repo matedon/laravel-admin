@@ -1,9 +1,9 @@
 <?php
 
-namespace Encore\Admin\Auth\Database;
+namespace MAteDon\Admin\Auth\Database;
 
-use Encore\Admin\Traits\AdminBuilder;
-use Encore\Admin\Traits\ModelTree;
+use MAteDon\Admin\Traits\AdminBuilder;
+use MAteDon\Admin\Traits\ModelTree;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 

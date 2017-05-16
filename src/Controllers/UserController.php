@@ -1,14 +1,14 @@
 <?php
 
-namespace Encore\Admin\Controllers;
+namespace MAteDon\Admin\Controllers;
 
-use Encore\Admin\Auth\Database\Administrator;
-use Encore\Admin\Auth\Database\Permission;
-use Encore\Admin\Auth\Database\Role;
-use Encore\Admin\Facades\Admin;
-use Encore\Admin\Form;
-use Encore\Admin\Grid;
-use Encore\Admin\Layout\Content;
+use MAteDon\Admin\Auth\Database\Administrator;
+use MAteDon\Admin\Auth\Database\Permission;
+use MAteDon\Admin\Auth\Database\Role;
+use MAteDon\Admin\Facades\Admin;
+use MAteDon\Admin\Form;
+use MAteDon\Admin\Grid;
+use MAteDon\Admin\Layout\Content;
 use Illuminate\Routing\Controller;
 
 class UserController extends Controller

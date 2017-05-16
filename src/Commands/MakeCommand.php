@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Admin\Commands;
+namespace MAteDon\Admin\Commands;
 
 use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputArgument;

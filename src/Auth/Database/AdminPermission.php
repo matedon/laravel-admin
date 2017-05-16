@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Admin\Auth\Database;
+namespace MAteDon\Admin\Auth\Database;
 
 trait AdminPermission
 {

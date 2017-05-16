@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Grid;
+namespace MAteDon\Admin\Grid;
 
-use Encore\Admin\Facades\Admin;
+use MAteDon\Admin\Facades\Admin;
 
 class Editable
 {

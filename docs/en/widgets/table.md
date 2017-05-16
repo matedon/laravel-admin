@@ -1,9 +1,9 @@
 # Table
 
-`Encore\Admin\Widgets\Table` class is used to generate forms：
+`MAteDon\Admin\Widgets\Table` class is used to generate forms：
 
 ```php
-use Encore\Admin\Widgets\Table;
+use MAteDon\Admin\Widgets\Table;
 
 // table 1
 $headers = ['Id', 'Email', 'Name', 'Company'];

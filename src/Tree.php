@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Admin;
+namespace MAteDon\Admin;
 
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Model;

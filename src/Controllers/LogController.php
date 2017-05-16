@@ -1,12 +1,12 @@
 <?php
 
-namespace Encore\Admin\Controllers;
+namespace MAteDon\Admin\Controllers;
 
-use Encore\Admin\Auth\Database\Administrator;
-use Encore\Admin\Auth\Database\OperationLog;
-use Encore\Admin\Facades\Admin;
-use Encore\Admin\Grid;
-use Encore\Admin\Layout\Content;
+use MAteDon\Admin\Auth\Database\Administrator;
+use MAteDon\Admin\Auth\Database\OperationLog;
+use MAteDon\Admin\Facades\Admin;
+use MAteDon\Admin\Grid;
+use MAteDon\Admin\Layout\Content;
 use Illuminate\Routing\Controller;
 
 class LogController extends Controller

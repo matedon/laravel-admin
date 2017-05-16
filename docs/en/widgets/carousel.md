@@ -1,9 +1,9 @@
 # Carousel
 
-`Encore\Admin\Widgets\Carousel`Used to generate carousel components:
+`MAteDon\Admin\Widgets\Carousel`Used to generate carousel components:
 
 ```php
-use Encore\Admin\Widgets\Carousel;
+use MAteDon\Admin\Widgets\Carousel;
 
 $items = [
     [

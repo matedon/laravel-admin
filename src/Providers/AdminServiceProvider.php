@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Providers;
+namespace MAteDon\Admin\Providers;
 
-use Encore\Admin\Facades\Admin;
+use MAteDon\Admin\Facades\Admin;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 
@@ -12,10 +12,10 @@ class AdminServiceProvider extends ServiceProvider
      * @var array
      */
     protected $commands = [
-        'Encore\Admin\Commands\MakeCommand',
-        'Encore\Admin\Commands\MenuCommand',
-        'Encore\Admin\Commands\InstallCommand',
-        'Encore\Admin\Commands\UninstallCommand',
+        'MAteDon\Admin\Commands\MakeCommand',
+        'MAteDon\Admin\Commands\MenuCommand',
+        'MAteDon\Admin\Commands\InstallCommand',
+        'MAteDon\Admin\Commands\UninstallCommand',
     ];
 
     /**
@@ -24,11 +24,11 @@ class AdminServiceProvider extends ServiceProvider
      * @var array
      */
     protected $routeMiddleware = [
-        'admin.auth'        => \Encore\Admin\Middleware\Authenticate::class,
-        'admin.pjax'        => \Encore\Admin\Middleware\PjaxMiddleware::class,
-        'admin.log'         => \Encore\Admin\Middleware\OperationLog::class,
-        'admin.permission'  => \Encore\Admin\Middleware\PermissionMiddleware::class,
-        'admin.bootstrap'   => \Encore\Admin\Middleware\BootstrapMiddleware::class,
+        'admin.auth'        => \MAteDon\Admin\Middleware\Authenticate::class,
+        'admin.pjax'        => \MAteDon\Admin\Middleware\PjaxMiddleware::class,
+        'admin.log'         => \MAteDon\Admin\Middleware\OperationLog::class,
+        'admin.permission'  => \MAteDon\Admin\Middleware\PermissionMiddleware::class,
+        'admin.bootstrap'   => \MAteDon\Admin\Middleware\BootstrapMiddleware::class,
     ];
 
     /**
@@ -75,7 +75,7 @@ class AdminServiceProvider extends ServiceProvider
         $this->app->booting(function () {
             $loader = AliasLoader::getInstance();
 
-            $loader->alias('Admin', \Encore\Admin\Facades\Admin::class);
+            $loader->alias('Admin', \MAteDon\Admin\Facades\Admin::class);
 
             if (is_null(config('auth.guards.admin'))) {
                 $this->setupAuth();

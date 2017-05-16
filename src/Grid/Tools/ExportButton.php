@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Grid\Tools;
+namespace MAteDon\Admin\Grid\Tools;
 
-use Encore\Admin\Grid;
+use MAteDon\Admin\Grid;
 
 class ExportButton extends AbstractTool
 {

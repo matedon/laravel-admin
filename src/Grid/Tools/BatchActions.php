@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Grid\Tools;
+namespace MAteDon\Admin\Grid\Tools;
 
-use Encore\Admin\Admin;
+use MAteDon\Admin\Admin;
 use Illuminate\Support\Collection;
 
 class BatchActions extends AbstractTool

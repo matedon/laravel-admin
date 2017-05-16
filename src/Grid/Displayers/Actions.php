@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Grid\Displayers;
+namespace MAteDon\Admin\Grid\Displayers;
 
-use Encore\Admin\Admin;
+use MAteDon\Admin\Admin;
 
 class Actions extends AbstractDisplayer
 {

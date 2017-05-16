@@ -1,9 +1,9 @@
 <?php
 
-namespace Encore\Admin\Widgets\Chart;
+namespace MAteDon\Admin\Widgets\Chart;
 
-use Encore\Admin\Admin;
-use Encore\Admin\Widgets\Widget;
+use MAteDon\Admin\Admin;
+use MAteDon\Admin\Widgets\Widget;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
 
