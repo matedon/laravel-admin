@@ -8,17 +8,19 @@
     var $keeper = $block.find('[data-element="field-switch-keeper"]')
     var $unset = $block.find('[data-element="field-switch-unset"]')
     var prevState
-    var options = $.extend({}, dataSet, {
-      onInit: function (event, state) {
-        prevState = $keeper.val()
-      },
-      onSwitchChange: function (event, state) {
-        prevState = (state ? 'on' : 'off')
-        $input.val(prevState)
-        $keeper.val(prevState)
+    var options = $.extend(true, {
+      bootstrapSwitch: {
+        onInit: function (event, state) {
+          prevState = $keeper.val()
+        },
+        onSwitchChange: function (event, state) {
+          prevState = (state ? 'on' : 'off')
+          $input.val(prevState)
+          $keeper.val(prevState)
+        }
       }
-    })
-    $input.bootstrapSwitch(options)
+    }, dataSet)
+    $input.bootstrapSwitch(options.bootstrapSwitch)
     $unset.on('click', function () {
       var isNull = $input.bootstrapSwitch('indeterminate')
       if (isNull) {

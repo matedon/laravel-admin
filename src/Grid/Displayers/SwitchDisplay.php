@@ -32,50 +32,21 @@ class SwitchDisplay extends AbstractDisplayer
     {
         $this->updateStates($states);
 
-        $name = $this->column->getName();
+        $this->setDataSet([
+            'url'             => $this->grid->resource() . '/' . $this->row->{$this->grid->getKeyName()},
+            'bootstrapSwitch' => [
+                'size'     => 'small',
+                'onText'   => $this->states['on']['text'],
+                'offText'  => $this->states['off']['text'],
+                'onColor'  => $this->states['on']['color'],
+                'offColor' => $this->states['off']['color']
+            ],
+        ]);
 
-        $class = "grid-switch-{$name}";
-
-        $script = <<<EOT
-
-$('.$class').bootstrapSwitch({
-    size:'mini',
-    onText: '{$this->states['on']['text']}',
-    offText: '{$this->states['off']['text']}',
-    onColor: '{$this->states['on']['color']}',
-    offColor: '{$this->states['off']['color']}',
-    onSwitchChange: function(event, state){
-
-        $(this).val(state ? 'on' : 'off');
-
-        var pk = $(this).data('key');
-        var value = $(this).val();
-
-        $.ajax({
-            url: "{$this->grid->resource()}/" + pk,
-            type: "POST",
-            data: {
-                $name: value,
-                _token: LA.token,
-                _method: 'PUT'
-            },
-            success: function (data) {
-                toastr.success(data.message);
-            }
-        });
-    }
-});
-
-EOT;
-
-        Admin::script($script);
-
-        $key = $this->row->{$this->grid->getKeyName()};
-
-        $checked = $this->states['on']['value'] == $this->value ? 'checked' : '';
-
-        return <<<EOT
-        <input type="checkbox" class="$class" $checked data-key="$key" />
-EOT;
+        return view('admin::display.switch', [
+            'checked' => $this->states['on']['value'] == $this->value,
+            'name'    => $this->column->getName(),
+            'dataSet' => $this->getDataSetJson(),
+        ])->render();
     }
 }

@@ -28,11 +28,19 @@ abstract class AbstractDisplayer
     protected $value;
 
     /**
+     * Variable to store JavaScript dataset.
+     * jQuery.data();
+     *
+     * @var array
+     */
+    protected $dataSet = [];
+
+    /**
      * Create a new displayer instance.
      *
-     * @param mixed     $value
-     * @param Grid      $grid
-     * @param Column    $column
+     * @param mixed $value
+     * @param Grid $grid
+     * @param Column $column
      * @param \stdClass $row
      */
     public function __construct($value, Grid $grid, Column $column, $row)
@@ -61,6 +69,22 @@ abstract class AbstractDisplayer
     public function getResource()
     {
         return $this->grid->resource();
+    }
+
+    /**
+     * @param array $dataSet
+     */
+    public function setDataSet($dataSet)
+    {
+        $this->dataSet = $dataSet;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDataSetJson()
+    {
+        return json_encode($this->dataSet);
     }
 
     /**

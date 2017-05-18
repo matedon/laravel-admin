@@ -12,6 +12,8 @@ class Text extends Field
 
     protected $icon = 'fa-pencil';
 
+    protected $type = 'text';
+
     /**
      * To change Text input value
      * @param string $content
@@ -54,7 +56,7 @@ class Text extends Field
         }
 
         $this->prepend('<i class="fa fa-fw ' . $this->icon . '"></i>')
-            ->defaultAttribute('type', 'text')
+            ->defaultAttribute('type', $this->type)
             ->defaultAttribute('id', $this->id)
             ->defaultAttribute('name', $this->elementName ?: $this->formatName($this->column))
             ->defaultAttribute('value', $valueAttribute)

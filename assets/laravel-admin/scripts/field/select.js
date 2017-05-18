@@ -6,9 +6,7 @@
     var dataSet = $block.data('optionsFieldSelect')
     var $input = $block.find('[data-element="field-select-input"]')
     var $keeper = $block.find('[data-element="field-select-keeper"]')
-    var options = $.extend({}, dataSet, {
-
-    })
+    var options = $.extend(true, {}, dataSet)
     $input.select2(options);
     $input.on('change.select2', function () {
       var inputVal = $input.val()

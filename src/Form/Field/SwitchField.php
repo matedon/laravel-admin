@@ -55,12 +55,14 @@ class SwitchField extends Field
             }
         }
         $this->setDataSet([
-            'size'          => 'small',
-            'onText'        => $this->states['on']['text'],
-            'offText'       => $this->states['off']['text'],
-            'onColor'       => $this->states['on']['color'],
-            'offColor'      => $this->states['off']['color'],
-            'indeterminate' => ($fieldValue === false ? true : false),
+            'bootstrapSwitch' => [
+                'size'          => 'small',
+                'onText'        => $this->states['on']['text'],
+                'offText'       => $this->states['off']['text'],
+                'onColor'       => $this->states['on']['color'],
+                'offColor'      => $this->states['off']['color'],
+                'indeterminate' => ($fieldValue === false ? true : false),
+            ],
         ]);
 
         return parent::render();

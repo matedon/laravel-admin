@@ -4,6 +4,10 @@ namespace MAteDon\Admin\Form\Field;
 
 class Mobile extends Text
 {
+    protected $type = 'phone';
+
+    protected $icon = 'fa-phone';
+
     protected static $js = [
         '/packages/admin/AdminLTE/plugins/input-mask/jquery.inputmask.bundle.min.js',
     ];
@@ -25,10 +29,6 @@ class Mobile extends Text
 
 $('{$this->getElementClassSelector()}').inputmask($options);
 EOT;
-
-        $this->prepend('<i class="fa fa-phone"></i>')
-            ->defaultAttribute('style', 'width: 150px');
-
         return parent::render();
     }
 }

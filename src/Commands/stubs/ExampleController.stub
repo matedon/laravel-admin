@@ -12,6 +12,8 @@ use MAteDon\Admin\Controllers\ModelForm;
 class ExampleController extends Controller
 {
     use ModelForm;
+    
+    protected $model = YourModel::class;
 
     /**
      * Index interface.
@@ -69,7 +71,7 @@ class ExampleController extends Controller
      */
     protected function grid()
     {
-        return Admin::grid(YourModel::class, function (Grid $grid) {
+        return Admin::grid($this->model, function (Grid $grid) {
 
             $grid->id('ID')->sortable();
 
@@ -85,7 +87,7 @@ class ExampleController extends Controller
      */
     protected function form()
     {
-        return Admin::form(YourModel::class, function (Form $form) {
+        return Admin::form($this->model, function (Form $form) {
 
             $form->display('id', 'ID');
 
