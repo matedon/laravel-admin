@@ -12,6 +12,7 @@ class AdminServiceProvider extends ServiceProvider
      * @var array
      */
     protected $commands = [
+        'MAteDon\Admin\Commands\AssetsCommand',
         'MAteDon\Admin\Commands\MakeCommand',
         'MAteDon\Admin\Commands\MenuCommand',
         'MAteDon\Admin\Commands\InstallCommand',
