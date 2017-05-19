@@ -256,6 +256,11 @@ class Field implements Renderable
         $this->dataSet = $dataSet;
     }
 
+    public function extendDataSet($dataSet)
+    {
+        $this->dataSet = array_extend($this->dataSet, $dataSet);
+    }
+
     /**
      * Format the name of the field.
      *

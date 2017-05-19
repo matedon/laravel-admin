@@ -27,9 +27,11 @@ class Select extends Field
 
     public function render()
     {
-        $this->setDataSet([
-            'allowClear'  => 'true',
-            'placeholder' => $this->label,
+        $this->extendDataSet([
+            'select2' => [
+                'allowClear'  => true,
+                'placeholder' => $this->label,
+            ],
         ]);
 
         if ($this->options instanceof \Closure) {
@@ -160,44 +162,15 @@ EOT;
      */
     public function ajax($url, $idField = 'id', $textField = 'text')
     {
-        // TODO: move all js code to scripts/fields/select.js
-
-        $this->script = <<<EOT
-
-$("{$this->getElementClassSelector()}").select2({
-  ajax: {
-    url: "$url",
-    dataType: 'json',
-    delay: 250,
-    data: function (params) {
-      return {
-        q: params.term,
-        page: params.page
-      };
-    },
-    processResults: function (data, params) {
-      params.page = params.page || 1;
-
-      return {
-        results: $.map(data.data, function (d) {
-                   d.id = d.$idField;
-                   d.text = d.$textField;
-                   return d;
-                }),
-        pagination: {
-          more: data.next_page_url
-        }
-      };
-    },
-    cache: true
-  },
-  minimumInputLength: 1,
-  escapeMarkup: function (markup) {
-      return markup;
-  }
-});
-
-EOT;
+        $this->extendDataSet([
+            'ajax'    => true,
+            'url'     => $url,
+            'fields'  => [
+                'id'   => $idField,
+                'text' => $textField
+            ],
+            'select2' => [],
+        ]);
 
         return $this;
     }

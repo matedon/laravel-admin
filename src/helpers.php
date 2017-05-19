@@ -131,3 +131,26 @@ if (!function_exists('composer_json')) {
         }
     }
 }
+
+if (!function_exists('array_extend')) {
+    /*
+     * Extend arrays as in jQuery
+     * It's like array_merge_recursive but common depth values are overwritten.
+     */
+    function array_extend()
+    {
+        $arrays = func_get_args();
+        $base = array_shift($arrays);
+        foreach ($arrays as $array) {
+            reset($base);
+            while (list($key, $value) = @each($array)) {
+                if (is_array($value) && @is_array($base[$key])) {
+                    $base[$key] = array_extend($base[$key], $value);
+                } else {
+                    $base[$key] = $value;
+                }
+            }
+        }
+        return $base;
+    }
+}
