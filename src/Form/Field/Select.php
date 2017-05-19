@@ -42,6 +42,10 @@ class Select extends Field
 
         $this->options = array_filter($this->options);
 
+        $this->value = is_null($this->value) ? 'null' : $this->value;
+        $this->value = $this->value ? $this->value : key($this->options);
+        $this->value = old($this->column, $this->value);
+
         return parent::render()->with(['options' => $this->options]);
     }
 

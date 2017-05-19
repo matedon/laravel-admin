@@ -16,15 +16,14 @@
         name="{{$name}}" {!! $attributes !!}>
         @foreach($options as $select => $option)
           <option value="{{ $select }}"
-            {{ $select == old($column, $value) ? 'selected' : '' }}>
+            {{ $select == $value ? 'selected' : '' }}>
             {{ $option }}
           </option>
         @endforeach
       </select>
-
       <input
         data-element="field-select-keeper"
-        type="hidden" name="{{ $name }}" value="{{ old($column, $value ? $value : key($options)) }}">
+        type="hidden" name="{{ $name }}" value="{{ $value }}">
     </div>
 
 
