@@ -8,7 +8,7 @@ class Slider extends Field
 {
     protected static $css = [
         '/packages/admin/AdminLTE/plugins/ionslider/ion.rangeSlider.css',
-        '/packages/admin/AdminLTE/plugins/ionslider/ion.rangeSlider.skinNice.css',
+        '/packages/admin/AdminLTE/plugins/ionslider/ion.rangeSlider.skinHTML5.css',
     ];
 
     protected static $js = [

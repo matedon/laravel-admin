@@ -47,7 +47,6 @@
         return markup
       }
     }
-    console.log(options)
     $input.select2(options.select2)
     const clearInput = function () {
       $input.val('').change()
