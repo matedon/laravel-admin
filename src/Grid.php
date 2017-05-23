@@ -507,7 +507,8 @@ class Grid
             return;
         }
 
-        $data = $this->processFilter();
+        $model = $this->processFilter();
+        $data = $model->toArray();
 
         $this->prependRowSelectorColumn();
         $this->appendActionsColumn();
@@ -520,7 +521,7 @@ class Grid
             $this->columnNames[] = $column->getName();
         });
 
-        $this->buildRows($data);
+        $this->buildRows($data, $model);
 
         $this->builded = true;
     }
@@ -586,14 +587,15 @@ class Grid
     /**
      * Build the grid rows.
      *
-     * @param array $data
+     * @param array $model
      *
      * @return void
      */
-    protected function buildRows(array $data)
+    protected function buildRows(array $data, $model)
     {
-        $this->rows = collect($data)->map(function ($model, $number) {
-            return new Row($number, $model);
+        $this->rows = collect($data)->map(function ($dataRow, $number) use ($model) {
+            $modelRow = $model[$number];
+            return new Row($number, $dataRow, $modelRow);
         });
 
         if ($this->rowsCallback) {

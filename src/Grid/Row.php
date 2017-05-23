@@ -19,11 +19,19 @@ class Row
     protected $data;
 
     /**
+     * The model of data.
+     *
+     * @var
+     */
+    protected $model;
+
+    /**
      * Attributes of row.
      *
      * @var array
      */
     protected $attributes = [];
+
 
     /**
      * Constructor.
@@ -31,11 +39,13 @@ class Row
      * @param $number
      * @param $data
      */
-    public function __construct($number, $data)
+    public function __construct($number, $data, $model)
     {
         $this->number = $number;
 
         $this->data = $data;
+
+        $this->model = $model;
     }
 
     /**
@@ -138,9 +148,19 @@ class Row
      *
      * @return mixed
      */
-    public function model()
+    public function data()
     {
         return $this->data;
+    }
+
+    /**
+     * Get model of this row.
+     *
+     * @return mixed
+     */
+    public function model()
+    {
+        return $this->model;
     }
 
     /**

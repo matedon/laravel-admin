@@ -183,7 +183,7 @@ class Model
                 $collection = call_user_func($this->collectionCallback, $collection);
             }
 
-            $this->data = $collection->toArray();
+            $this->data = $collection;
         }
 
         return $this->data;
@@ -469,5 +469,13 @@ class Model
         if (array_key_exists($key, $data)) {
             return $data[$key];
         }
+    }
+
+    /**
+     * @return EloquentModel
+     */
+    public function getModel()
+    {
+        return $this->model;
     }
 }
