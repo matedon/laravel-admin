@@ -6,11 +6,7 @@ class Url extends Text
 {
     protected $rules = 'url';
 
-    public function render()
-    {
-        $this->prepend('<i class="fa fa-internet-explorer"></i>')
-            ->defaultAttribute('type', 'url');
+    protected $type = 'url';
 
-        return parent::render();
-    }
+    protected $icon = 'fa-globe';
 }
