@@ -8,8 +8,14 @@
 
     @include('admin::form.error')
     <div
+      class="input-group"
       data-block="field-select"
       data-options-field-select='{!! $dataSet !!}'>
+
+      @if ($prepend)
+        <span class="input-group-addon">{!! $prepend !!}</span>
+      @endif
+
       <select
         data-element="field-select-input"
         class="form-control {{ $class }}" style="width: 100%;"
@@ -23,6 +29,10 @@
           </option>
         @endforeach
       </select>
+
+      @if ($append)
+        <span class="input-group-addon clearfix">{!! $append !!}</span>
+      @endif
 
       <input type="hidden" name="{{ $name }}[]">
     </div>

@@ -11,11 +11,14 @@ class Select extends Field
 {
     protected static $css = [
         '/packages/admin/AdminLTE/plugins/select2/select2.min.css',
+        '/packages/admin/AdminLTE/plugins/select2/select2.custom.css',
     ];
 
     protected static $js = [
         '/packages/admin/AdminLTE/plugins/select2/select2.full.min.js',
     ];
+
+    protected $icon = 'fa-level-down';
 
     public function prepare($value)
     {
@@ -48,7 +51,15 @@ class Select extends Field
         $this->value = $this->value ? $this->value : key($this->options);
         $this->value = old($this->column, $this->value);
 
-        return parent::render()->with(['options' => $this->options]);
+        if ($this->icon) {
+            $this->prepend('<i class="fa fa-lg fa-fw ' . $this->icon . '"></i>');
+        }
+
+        return parent::render()->with([
+            'prepend' => $this->prepend,
+            'append'  => $this->append,
+            'options' => $this->options,
+        ]);
     }
 
     /**

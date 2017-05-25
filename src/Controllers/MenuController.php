@@ -35,11 +35,21 @@ class MenuController extends Controller
                     $form = new \MAteDon\Admin\Widgets\Form();
                     $form->action(admin_url('auth/menu'));
 
-                    $form->select('parent_id', trans('admin::lang.parent_id'))->options(Menu::selectOptions());
-                    $form->text('title', trans('admin::lang.title'))->rules('required');
-                    $form->icon('icon', trans('admin::lang.icon'))->default('fa-bars')->rules('required')->help($this->iconHelp());
-                    $form->text('uri', trans('admin::lang.uri'));
-                    $form->multipleSelect('roles', trans('admin::lang.roles'))->options(Role::all()->pluck('name', 'id'));
+                    $form
+                        ->select('parent_id', trans('admin::lang.parent_id'))
+                        ->options(Menu::selectOptions());
+                    $form
+                        ->text('title', trans('admin::lang.title'))
+                        ->rules('required');
+                    $form
+                        ->icon('icon', trans('admin::lang.icon'))
+                        ->default('fa-bars')->rules('required')
+                        ->help($this->iconHelp());
+                    $form
+                        ->text('uri', trans('admin::lang.uri'));
+                    $form
+                        ->multipleSelect('roles', trans('admin::lang.roles'))
+                        ->options(Role::all()->pluck('name', 'id'));
 
                     $column->append((new Box(trans('admin::lang.new'), $form))->style('success'));
                 });
@@ -70,15 +80,9 @@ class MenuController extends Controller
             $tree->disableCreate();
 
             $tree->branch(function ($branch) {
-                $payload = "<i class='fa {$branch['icon']}'></i>&nbsp;<strong>{$branch['title']}</strong>";
-
-                if (!isset($branch['children'])) {
-                    $uri = admin_url($branch['uri']);
-
-                    $payload .= "&nbsp;&nbsp;&nbsp;<a href=\"$uri\" class=\"dd-nodrag\">$uri</a>";
-                }
-
-                return $payload;
+                return view('admin::menu.line', [
+                    'branch' => $branch
+                ])->render();
             });
         });
     }
@@ -108,16 +112,27 @@ class MenuController extends Controller
     public function form()
     {
         return Menu::form(function (Form $form) {
-            $form->display('id', 'ID');
+            $form->id('id', 'ID');
 
-            $form->select('parent_id', trans('admin::lang.parent_id'))->options(Menu::selectOptions());
-            $form->text('title', trans('admin::lang.title'))->rules('required');
-            $form->icon('icon', trans('admin::lang.icon'))->default('fa-bars')->rules('required')->help($this->iconHelp());
-            $form->text('uri', trans('admin::lang.uri'));
-            $form->multipleSelect('roles', trans('admin::lang.roles'))->options(Role::all()->pluck('name', 'id'));
+            $form
+                ->select('parent_id', trans('admin::lang.parent_id'))
+                ->options(Menu::selectOptions());
+            $form
+                ->text('title', trans('admin::lang.title'))
+                ->rules('required');
+            $form
+                ->icon('icon', trans('admin::lang.icon'))
+                ->default('fa-bars')
+                ->rules('required')
+                ->help($this->iconHelp());
+            $form
+                ->text('uri', trans('admin::lang.uri'));
+            $form
+                ->multipleSelect('roles', trans('admin::lang.roles'))
+                ->options(Role::all()->pluck('name', 'id'));
 
-            $form->display('created_at', trans('admin::lang.created_at'));
-            $form->display('updated_at', trans('admin::lang.updated_at'));
+            $form->timestamp('created_at', trans('admin::lang.created_at'));
+            $form->timestamp('updated_at', trans('admin::lang.updated_at'));
         });
     }
 

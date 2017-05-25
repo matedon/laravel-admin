@@ -9,14 +9,18 @@
 
   <link rel="stylesheet" href="{{ asset("/packages/admin/AdminLTE/bootstrap/css/bootstrap.min.css") }}">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="{{ asset("/packages/admin/font-awesome/css/font-awesome.min.css") }}">
+  {{--
+    <link rel="stylesheet" href="{{ asset("/packages/admin/font-awesome/css/font-awesome.min.css") }}">
+  --}}
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
   <!-- Theme style -->
   <link rel="stylesheet"
         href="{{ asset("/packages/admin/AdminLTE/dist/css/skins/" . config('admin.skin') .".min.css") }}">
 
   {!! Admin::css() !!}
-  <link rel="stylesheet" href="{{ asset("/packages/admin/nestable/nestable.css") }}">
+  <link rel="stylesheet" href="{{ asset("/packages/admin/nestable/jquery.nestable.css") }}">
   <link rel="stylesheet" href="{{ asset("/packages/admin/toastr/build/toastr.min.css") }}">
   <link rel="stylesheet" href="{{ asset("/packages/admin/bootstrap3-editable/css/bootstrap-editable.css") }}">
   <!--
@@ -69,7 +73,9 @@
 <script src="{{ asset ("/packages/admin/laravel-admin/scripts/display/switch.js") }}"></script>
 <script src="{{ asset ("/packages/admin/laravel-admin/scripts/field/switch.js") }}"></script>
 <script src="{{ asset ("/packages/admin/laravel-admin/scripts/field/select.js") }}"></script>
+<script src="{{ asset ("/packages/admin/laravel-admin/scripts/field/icon.js") }}"></script>
 <script src="{{ asset ("/packages/admin/laravel-admin/scripts/action/delete.js") }}"></script>
+<script src="{{ asset ("/packages/admin/laravel-admin/scripts/block/menu-tree.js") }}"></script>
 
 <script>
   (function () {

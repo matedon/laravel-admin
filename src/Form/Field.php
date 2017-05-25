@@ -177,6 +177,33 @@ class Field implements Renderable
     protected $dataSet = [];
 
     /**
+     * If you want to prepend any kind of content before the input.
+     * For example bootstrap's input-group-addon
+     * @var
+     */
+    protected $prepend;
+
+    /**
+     * If you want to prepend any kind of content after the input.
+     * For example bootstrap's input-group-addon
+     * @var
+     */
+    protected $append;
+
+    /**
+     * Wether you set an icon for the prepended content.
+     * @var string
+     */
+    protected $icon = 'fa-pencil';
+
+    /**
+     * Input type, mainly for plain input tipes.
+     * HTML5 input tipes goes here: text, password, email, phone etc...
+     * @var string
+     */
+    protected $type = 'text';
+
+    /**
      * Field constructor.
      *
      * @param $column
@@ -187,6 +214,47 @@ class Field implements Renderable
         $this->column = $column;
         $this->label = $this->formatLabel($arguments, $modelName);
         $this->id = $this->formatId($column);
+    }
+
+    public function prepend($string)
+    {
+        if (is_null($this->prepend)) {
+            $this->prepend = $string;
+        }
+
+        return $this;
+    }
+
+    public function append($string)
+    {
+        if (is_null($this->append)) {
+            $this->append = $string;
+        }
+
+        return $this;
+    }
+
+    public function icon($icon)
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    protected function initPlainInput()
+    {
+        if (empty($this->view)) {
+            $this->view = 'admin::form.input';
+        }
+    }
+
+    protected function defaultAttribute($attribute, $value)
+    {
+        if (!array_key_exists($attribute, $this->attributes)) {
+            $this->attribute($attribute, $value);
+        }
+
+        return $this;
     }
 
     /**

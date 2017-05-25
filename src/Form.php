@@ -43,6 +43,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @method Field\Image          image($column, $label = '')
  * @method Field\Date           date($column, $label = '')
  * @method Field\Datetime       datetime($column, $label = '')
+ * @method Field\TimeStamp      timestamp($column, $label = '')
  * @method Field\Time           time($column, $label = '')
  * @method Field\Year           year($column, $label = '')
  * @method Field\Month          month($column, $label = '')
@@ -1161,6 +1162,7 @@ class Form
             'datetime'          => \MAteDon\Admin\Form\Field\Datetime::class,
             'dateTimeRange'     => \MAteDon\Admin\Form\Field\DatetimeRange::class,
             'datetimeRange'     => \MAteDon\Admin\Form\Field\DatetimeRange::class,
+            'timestamp'         => \MAteDon\Admin\Form\Field\TimeStamp::class,
             'decimal'           => \MAteDon\Admin\Form\Field\Decimal::class,
             'display'           => \MAteDon\Admin\Form\Field\Display::class,
             'divider'           => \MAteDon\Admin\Form\Field\Divide::class,

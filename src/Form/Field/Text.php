@@ -6,13 +6,7 @@ use MAteDon\Admin\Form\Field;
 
 class Text extends Field
 {
-    use PlainInput;
-
     protected $content;
-
-    protected $icon = 'fa-pencil';
-
-    protected $type = 'text';
 
     /**
      * To change Text input value
@@ -25,13 +19,6 @@ class Text extends Field
         } else {
             $this->content = (string)$content;
         }
-
-        return $this;
-    }
-
-    public function icon($icon)
-    {
-        $this->icon = $icon;
 
         return $this;
     }
