@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Class Form.
  *
  * @method Field\Text           text($column, $label = '')
+ * @method Field\CKEditor       ckeditor($column, $label = '')
  * @method Field\Checkbox       checkbox($column, $label = '')
  * @method Field\Radio          radio($column, $label = '')
  * @method Field\Select         select($column, $label = '')
@@ -38,7 +39,6 @@ use Symfony\Component\HttpFoundation\Response;
  * @method Field\Mobile         mobile($column, $label = '')
  * @method Field\Slider         slider($column, $label = '')
  * @method Field\Map            map($latitude, $longitude, $label = '')
- * @method Field\Editor         editor($column, $label = '')
  * @method Field\File           file($column, $label = '')
  * @method Field\Image          image($column, $label = '')
  * @method Field\Date           date($column, $label = '')
@@ -53,7 +53,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @method Field\Number         number($column, $label = '')
  * @method Field\Currency       currency($column, $label = '')
  * @method Field\HasMany        hasMany($relationName, $callback)
- * @method Field\SwitchField    switch($column, $label = '')
+ * @method Field\SwitchField    switch ($column, $label = '')
  * @method Field\Display        display($column, $label = '')
  * @method Field\Rate           rate($column, $label = '')
  * @method Field\Divide         divider()
@@ -239,7 +239,7 @@ class Form
     /**
      * Use tab to split form.
      *
-     * @param string  $title
+     * @param string $title
      * @param Closure $content
      *
      * @return $this
@@ -506,7 +506,7 @@ class Form
             ]);
         }
 
-        /* @var Model $this->model */
+        /* @var Model $this ->model */
         $this->model = $this->model->with($this->getRelations())->findOrFail($id);
 
         $this->setFieldOriginalValue();
@@ -524,7 +524,7 @@ class Form
             $updates = $this->prepareUpdate($this->updates);
 
             foreach ($updates as $column => $value) {
-                /* @var Model $this->model */
+                /* @var Model $this ->model */
                 $this->model->setAttribute($column, $value);
             }
 
@@ -598,7 +598,7 @@ class Form
     /**
      * Handle orderable update.
      *
-     * @param int   $id
+     * @param int $id
      * @param array $input
      *
      * @return bool
@@ -697,7 +697,7 @@ class Form
      * Prepare input data for update.
      *
      * @param array $updates
-     * @param bool  $hasDot  If column name contains a 'dot', only has-one relation column use this.
+     * @param bool $hasDot If column name contains a 'dot', only has-one relation column use this.
      *
      * @return array
      */
@@ -738,15 +738,16 @@ class Form
 
     /**
      * @param string|array $columns
-     * @param bool         $hasDot
+     * @param bool $hasDot
      *
      * @return bool
      */
     public function invalidColumn($columns, $hasDot = false)
     {
-        foreach ((array) $columns as $column) {
+        foreach ((array)$columns as $column) {
             if ((!$hasDot && Str::contains($column, '.')) ||
-                ($hasDot && !Str::contains($column, '.'))) {
+                ($hasDot && !Str::contains($column, '.'))
+            ) {
                 return true;
             }
         }
@@ -854,13 +855,13 @@ class Form
      */
     public function ignore($fields)
     {
-        $this->ignored = array_merge($this->ignored, (array) $fields);
+        $this->ignored = array_merge($this->ignored, (array)$fields);
 
         return $this;
     }
 
     /**
-     * @param array        $data
+     * @param array $data
      * @param string|array $columns
      *
      * @return array|mixed
@@ -1037,7 +1038,7 @@ class Form
     public function setWidth($fieldWidth = 8, $labelWidth = 2)
     {
         $this->builder()->fields()->each(function ($field) use ($fieldWidth, $labelWidth) {
-            /* @var Field $field  */
+            /* @var Field $field */
             $field->setWidth($fieldWidth, $labelWidth);
         });
 
@@ -1132,7 +1133,7 @@ class Form
      * Get or set input data.
      *
      * @param string $key
-     * @param null   $value
+     * @param null $value
      *
      * @return array|mixed
      */
@@ -1153,52 +1154,52 @@ class Form
     public static function registerBuiltinFields()
     {
         $map = [
-            'button'            => \MAteDon\Admin\Form\Field\Button::class,
-            'checkbox'          => \MAteDon\Admin\Form\Field\Checkbox::class,
-            'color'             => \MAteDon\Admin\Form\Field\Color::class,
-            'currency'          => \MAteDon\Admin\Form\Field\Currency::class,
-            'date'              => \MAteDon\Admin\Form\Field\Date::class,
-            'dateRange'         => \MAteDon\Admin\Form\Field\DateRange::class,
-            'datetime'          => \MAteDon\Admin\Form\Field\Datetime::class,
-            'dateTimeRange'     => \MAteDon\Admin\Form\Field\DatetimeRange::class,
-            'datetimeRange'     => \MAteDon\Admin\Form\Field\DatetimeRange::class,
-            'timestamp'         => \MAteDon\Admin\Form\Field\TimeStamp::class,
-            'decimal'           => \MAteDon\Admin\Form\Field\Decimal::class,
-            'display'           => \MAteDon\Admin\Form\Field\Display::class,
-            'divider'           => \MAteDon\Admin\Form\Field\Divide::class,
-            'divide'            => \MAteDon\Admin\Form\Field\Divide::class,
-            'embeds'            => \MAteDon\Admin\Form\Field\Embeds::class,
-            'editor'            => \MAteDon\Admin\Form\Field\Editor::class,
-            'email'             => \MAteDon\Admin\Form\Field\Email::class,
-            'file'              => \MAteDon\Admin\Form\Field\File::class,
-            'hasMany'           => \MAteDon\Admin\Form\Field\HasMany::class,
-            'hidden'            => \MAteDon\Admin\Form\Field\Hidden::class,
-            'id'                => \MAteDon\Admin\Form\Field\Id::class,
-            'image'             => \MAteDon\Admin\Form\Field\Image::class,
-            'ip'                => \MAteDon\Admin\Form\Field\Ip::class,
-            'map'               => \MAteDon\Admin\Form\Field\Map::class,
-            'mobile'            => \MAteDon\Admin\Form\Field\Mobile::class,
-            'month'             => \MAteDon\Admin\Form\Field\Month::class,
-            'multipleSelect'    => \MAteDon\Admin\Form\Field\MultipleSelect::class,
-            'number'            => \MAteDon\Admin\Form\Field\Number::class,
-            'password'          => \MAteDon\Admin\Form\Field\Password::class,
-            'radio'             => \MAteDon\Admin\Form\Field\Radio::class,
-            'rate'              => \MAteDon\Admin\Form\Field\Rate::class,
-            'select'            => \MAteDon\Admin\Form\Field\Select::class,
-            'slider'            => \MAteDon\Admin\Form\Field\Slider::class,
-            'switch'            => \MAteDon\Admin\Form\Field\SwitchField::class,
-            'text'              => \MAteDon\Admin\Form\Field\Text::class,
-            'textarea'          => \MAteDon\Admin\Form\Field\Textarea::class,
-            'time'              => \MAteDon\Admin\Form\Field\Time::class,
-            'timeRange'         => \MAteDon\Admin\Form\Field\TimeRange::class,
-            'url'               => \MAteDon\Admin\Form\Field\Url::class,
-            'year'              => \MAteDon\Admin\Form\Field\Year::class,
-            'html'              => \MAteDon\Admin\Form\Field\Html::class,
-            'tags'              => \MAteDon\Admin\Form\Field\Tags::class,
-            'icon'              => \MAteDon\Admin\Form\Field\Icon::class,
-            'multipleFile'      => \MAteDon\Admin\Form\Field\MultipleFile::class,
-            'multipleImage'     => \MAteDon\Admin\Form\Field\MultipleImage::class,
-            'captcha'           => \MAteDon\Admin\Form\Field\Captcha::class,
+            'button'         => \MAteDon\Admin\Form\Field\Button::class,
+            'checkbox'       => \MAteDon\Admin\Form\Field\Checkbox::class,
+            'color'          => \MAteDon\Admin\Form\Field\Color::class,
+            'currency'       => \MAteDon\Admin\Form\Field\Currency::class,
+            'date'           => \MAteDon\Admin\Form\Field\Date::class,
+            'dateRange'      => \MAteDon\Admin\Form\Field\DateRange::class,
+            'datetime'       => \MAteDon\Admin\Form\Field\Datetime::class,
+            'dateTimeRange'  => \MAteDon\Admin\Form\Field\DatetimeRange::class,
+            'datetimeRange'  => \MAteDon\Admin\Form\Field\DatetimeRange::class,
+            'timestamp'      => \MAteDon\Admin\Form\Field\TimeStamp::class,
+            'decimal'        => \MAteDon\Admin\Form\Field\Decimal::class,
+            'display'        => \MAteDon\Admin\Form\Field\Display::class,
+            'divider'        => \MAteDon\Admin\Form\Field\Divide::class,
+            'divide'         => \MAteDon\Admin\Form\Field\Divide::class,
+            'embeds'         => \MAteDon\Admin\Form\Field\Embeds::class,
+            'email'          => \MAteDon\Admin\Form\Field\Email::class,
+            'file'           => \MAteDon\Admin\Form\Field\File::class,
+            'hasMany'        => \MAteDon\Admin\Form\Field\HasMany::class,
+            'hidden'         => \MAteDon\Admin\Form\Field\Hidden::class,
+            'id'             => \MAteDon\Admin\Form\Field\Id::class,
+            'image'          => \MAteDon\Admin\Form\Field\Image::class,
+            'ip'             => \MAteDon\Admin\Form\Field\Ip::class,
+            'map'            => \MAteDon\Admin\Form\Field\Map::class,
+            'mobile'         => \MAteDon\Admin\Form\Field\Mobile::class,
+            'month'          => \MAteDon\Admin\Form\Field\Month::class,
+            'multipleSelect' => \MAteDon\Admin\Form\Field\MultipleSelect::class,
+            'number'         => \MAteDon\Admin\Form\Field\Number::class,
+            'password'       => \MAteDon\Admin\Form\Field\Password::class,
+            'radio'          => \MAteDon\Admin\Form\Field\Radio::class,
+            'rate'           => \MAteDon\Admin\Form\Field\Rate::class,
+            'select'         => \MAteDon\Admin\Form\Field\Select::class,
+            'slider'         => \MAteDon\Admin\Form\Field\Slider::class,
+            'switch'         => \MAteDon\Admin\Form\Field\SwitchField::class,
+            'text'           => \MAteDon\Admin\Form\Field\Text::class,
+            'textarea'       => \MAteDon\Admin\Form\Field\Textarea::class,
+            'ckeditor'       => \MAteDon\Admin\Form\Field\CKEditor::class,
+            'time'           => \MAteDon\Admin\Form\Field\Time::class,
+            'timeRange'      => \MAteDon\Admin\Form\Field\TimeRange::class,
+            'url'            => \MAteDon\Admin\Form\Field\Url::class,
+            'year'           => \MAteDon\Admin\Form\Field\Year::class,
+            'html'           => \MAteDon\Admin\Form\Field\Html::class,
+            'tags'           => \MAteDon\Admin\Form\Field\Tags::class,
+            'icon'           => \MAteDon\Admin\Form\Field\Icon::class,
+            'multipleFile'   => \MAteDon\Admin\Form\Field\MultipleFile::class,
+            'multipleImage'  => \MAteDon\Admin\Form\Field\MultipleImage::class,
+            'captcha'        => \MAteDon\Admin\Form\Field\Captcha::class,
         ];
 
         foreach ($map as $abstract => $class) {
@@ -1305,7 +1306,7 @@ class Form
      * Generate a Field object and add to form builder if Field exists.
      *
      * @param string $method
-     * @param array  $arguments
+     * @param array $arguments
      *
      * @return Field|void
      */
