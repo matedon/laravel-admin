@@ -71,6 +71,7 @@ class UserController extends Controller
             $grid->username(trans('admin::lang.username'));
             $grid->name(trans('admin::lang.name'));
             $grid->roles(trans('admin::lang.roles'))->pluck('name')->label();
+            $grid->permissions(trans('admin::lang.permissions'))->pluck('name')->label();
             $grid->created_at(trans('admin::lang.created_at'));
             $grid->updated_at(trans('admin::lang.updated_at'));
 

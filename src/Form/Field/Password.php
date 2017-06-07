@@ -4,11 +4,7 @@ namespace MAteDon\Admin\Form\Field;
 
 class Password extends Text
 {
-    public function render()
-    {
-        $this->prepend('<i class="fa fa-eye-slash"></i>')
-            ->defaultAttribute('type', 'password');
+    protected $icon = 'fa-eye-slash';
 
-        return parent::render();
-    }
+    protected $type = 'password';
 }

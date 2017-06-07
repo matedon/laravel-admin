@@ -14,7 +14,7 @@ trait AdminPermission
     public function getAvatarAttribute($avatar)
     {
         if ($avatar) {
-            return rtrim(config('admin.upload.host'), '/').'/'.trim($avatar, '/');
+            return rtrim(config('admin.upload.host'), '/') . '/' . trim($avatar, '/');
         }
 
         return asset('/packages/admin/AdminLTE/dist/img/user2-160x160.jpg');
@@ -48,8 +48,15 @@ trait AdminPermission
         return $this->belongsToMany($relatedModel, $pivotTable, 'user_id', 'permission_id');
     }
 
+    public function hasPermission($permission)
+    {
+        if (method_exists($this, 'permissions')) {
+            return $this->permissions()->where('slug', $permission)->exists();
+        }
+    }
+
     /**
-     * Check if user has permission.
+     * Check if user has permission
      *
      * @param $permission
      *
@@ -61,8 +68,8 @@ trait AdminPermission
             return true;
         }
 
-        if (method_exists($this, 'permissions')) {
-            if ($this->permissions()->where('slug', $permission)->exists()) {
+        if (method_exists($this, 'hasPermission')) {
+            if ($this->hasPermission($permission)) {
                 return true;
             }
         }
@@ -119,7 +126,7 @@ trait AdminPermission
      */
     public function inRoles($roles = [])
     {
-        return $this->roles()->whereIn('slug', (array) $roles)->exists();
+        return $this->roles()->whereIn('slug', (array)$roles)->exists();
     }
 
     /**
