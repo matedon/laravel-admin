@@ -481,10 +481,11 @@ class Field implements Renderable
         if (is_null($rules)) {
             return $this->rules;
         }
-
-        $rules = array_filter(explode('|', "{$this->rules}|$rules"));
-
-        $this->rules = implode('|', $rules);
+        $glue = '|';
+        $rulesArray = explode($glue, (string)$this->rules);
+        array_push($rulesArray, $rules);
+        $rulesArray = array_filter($rulesArray);
+        $this->rules = implode($glue, $rulesArray);
 
         return $this;
     }

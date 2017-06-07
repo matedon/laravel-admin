@@ -4,7 +4,7 @@ namespace MAteDon\Admin\Form\Field;
 
 class Url extends Text
 {
-    protected $rules = 'url';
+    protected $rules = 'url|nullable';
 
     protected $type = 'url';
 

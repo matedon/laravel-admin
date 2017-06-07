@@ -4,7 +4,7 @@ namespace MAteDon\Admin\Form\Field;
 
 class Email extends Text
 {
-    protected $rules = 'email';
+    protected $rules = 'email|nullable';
 
     protected $type = 'email';
 
