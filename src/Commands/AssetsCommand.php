@@ -39,11 +39,16 @@ class AssetsCommand extends Command
 
     protected function symlinkAssets()
     {
+        $makeFiles = $this->laravel->make('files');
         $assetsPath = __DIR__ . '/../../assets';
         $publicPath = public_path();
-        $packagesPath = $publicPath . '/packages/admin';
-        if ($this->laravel->make('files')->link($assetsPath, $packagesPath)) {
-            $this->info('LINK CREATED: ' . $packagesPath);
+        $packagesPath = $publicPath . '/packages';
+        if (!$makeFiles->exists($packagesPath)) {
+            $makeFiles->makeDirectory($packagesPath);
+        }
+        $linkedPath = $packagesPath . '/admin';
+        if ($makeFiles->link($assetsPath, $linkedPath)) {
+            $this->info('LINK CREATED: ' . $linkedPath);
         }
     }
 }
