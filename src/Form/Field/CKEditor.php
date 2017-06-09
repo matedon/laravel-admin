@@ -20,8 +20,10 @@ class CKEditor extends Field
         language: 'hu',
         toolbar: [
           [ 'Undo', 'Redo' ],
-          [ 'Styles', 'Bold', 'Italic', 'Underline', 'SpellChecker', 'Scayt', '-', 'NumberedList', 'BulletedList', 'SpecialChar' ],
+          [ 'Format', 'Styles' ],
+          [ 'Bold', 'Italic', 'Underline', 'SpellChecker', 'Scayt', '-', 'NumberedList', 'BulletedList', 'SpecialChar' ],
           [ 'Link', 'Unlink' ],
+          '/',
           [ 'SelectAll', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord' ],
           [ 'Preview', 'Maximize' ],
           [ 'Source' ]
