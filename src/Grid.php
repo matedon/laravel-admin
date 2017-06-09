@@ -908,6 +908,8 @@ class Grid
             'link'        => \MAteDon\Admin\Grid\Displayers\Link::class,
             'badge'       => \MAteDon\Admin\Grid\Displayers\Badge::class,
             'progressBar' => \MAteDon\Admin\Grid\Displayers\ProgressBar::class,
+            'dateFormat'  => \MAteDon\Admin\Grid\Displayers\DateFormat::class,
+            'stripTags'   => \MAteDon\Admin\Grid\Displayers\StripTags::class,
             'radio'       => \MAteDon\Admin\Grid\Displayers\Radio::class,
             'checkbox'    => \MAteDon\Admin\Grid\Displayers\Checkbox::class,
             'orderable'   => \MAteDon\Admin\Grid\Displayers\Orderable::class,
