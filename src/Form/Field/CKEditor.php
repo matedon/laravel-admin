@@ -21,9 +21,10 @@ class CKEditor extends Field
         toolbar: [
           [ 'Undo', 'Redo' ],
           [ 'Format', 'Styles' ],
-          [ 'Bold', 'Italic', 'Underline', 'SpellChecker', 'Scayt', '-', 'NumberedList', 'BulletedList', 'SpecialChar' ],
-          [ 'Link', 'Unlink' ],
-          '/',
+          [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript' ],
+          [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote' ],
+          [ 'RemoveFormat', 'SpellChecker', 'Scayt' ],
+          [ 'Link', 'Unlink', 'SpecialChar' ],
           [ 'SelectAll', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord' ],
           [ 'Preview', 'Maximize' ],
           [ 'Source' ]
