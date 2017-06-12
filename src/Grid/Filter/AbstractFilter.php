@@ -58,6 +58,13 @@ abstract class AbstractFilter
     protected $modelName;
 
     /**
+     * Element attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [];
+
+    /**
      * AbstractFilter constructor.
      *
      * @param $column
@@ -311,9 +318,14 @@ abstract class AbstractFilter
 
         list($relation, $args[0]) = explode('.', $this->column);
 
-        return ['whereHas' => [$relation, function ($relation) use ($args) {
-            call_user_func_array([$relation, $this->query], $args);
-        }]];
+        return [
+            'whereHas' => [
+                $relation,
+                function ($relation) use ($args) {
+                    call_user_func_array([$relation, $this->query], $args);
+                }
+            ]
+        ];
     }
 
     /**
@@ -329,6 +341,20 @@ abstract class AbstractFilter
     }
 
     /**
+     * Format the field attributes.
+     *
+     * @return string
+     */
+    protected function formatAttributes()
+    {
+        $html = [];
+        foreach ($this->attributes as $name => $value) {
+            $html[] = $name . '="' . e($value) . '"';
+        }
+        return implode(' ', $html);
+    }
+
+    /**
      * Variables for filter view.
      *
      * @return array
@@ -336,14 +362,62 @@ abstract class AbstractFilter
     protected function variables()
     {
         $variables = [
-            'id'    => $this->id,
-            'name'  => $this->formatName($this->column),
-            'label' => $this->label,
-            'value' => $this->value,
-            'field' => $this->field(),
+            'id'         => $this->id,
+            'name'       => $this->formatName($this->column),
+            'label'      => $this->label,
+            'value'      => $this->value,
+            'attributes' => $this->formatAttributes(),
+            'field'      => $this->field(),
         ];
 
         return array_merge($variables, $this->fieldVars());
+    }
+
+
+    /**
+     * Set or get value of the field.
+     *
+     * @param null $value
+     *
+     * @return mixed
+     */
+    public function value($value = null)
+    {
+        if (is_null($value)) {
+            return is_null($this->value) ? '' : $this->value;
+        }
+
+        if (is_callable($value)) {
+            $this->value = $value;
+        } else {
+            $this->value = (string)$value;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add html attributes to elements.
+     *
+     * @param array|string $attribute
+     * @param mixed $value
+     *
+     * @return $this
+     */
+    public function attribute($attribute, $value = null)
+    {
+        if (is_array($attribute)) {
+            $this->attributes = array_merge($this->attributes, $attribute);
+        } else {
+            $this->attributes[$attribute] = (string)$value;
+        }
+
+        return $this;
+    }
+
+    public function readOnly()
+    {
+        return $this->attribute('disabled', true);
     }
 
     /**
@@ -354,7 +428,7 @@ abstract class AbstractFilter
     public function render()
     {
         $class = explode('\\', get_called_class());
-        $view = 'admin::filter.'.strtolower(end($class));
+        $view = 'admin::filter.' . strtolower(end($class));
 
         return view($view, $this->variables());
     }
@@ -381,6 +455,6 @@ abstract class AbstractFilter
             return call_user_func_array([$this->field, $method], $params);
         }
 
-        throw new \Exception('Method "'.$method.'" not exists.');
+        throw new \Exception('Method "' . $method . '" not exists.');
     }
 }
