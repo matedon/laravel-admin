@@ -909,6 +909,7 @@ class Grid
             'badge'       => \MAteDon\Admin\Grid\Displayers\Badge::class,
             'progressBar' => \MAteDon\Admin\Grid\Displayers\ProgressBar::class,
             'dateFormat'  => \MAteDon\Admin\Grid\Displayers\DateFormat::class,
+            'boolean'     => \MAteDon\Admin\Grid\Displayers\Boolean::class,
             'stripTags'   => \MAteDon\Admin\Grid\Displayers\StripTags::class,
             'radio'       => \MAteDon\Admin\Grid\Displayers\Radio::class,
             'checkbox'    => \MAteDon\Admin\Grid\Displayers\Checkbox::class,

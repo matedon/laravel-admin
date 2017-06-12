@@ -4,10 +4,10 @@ namespace MAteDon\Admin\Grid\Displayers;
 
 class Button extends AbstractDisplayer
 {
-    public function display($style)
+    public function display($styleArray = [])
     {
-        $style = collect((array) $style)->map(function ($style) {
-            return 'btn-'.$style;
+        $style = collect((array)$styleArray)->map(function ($styleBit) {
+            return 'btn-' . $styleBit;
         })->implode(' ');
 
         return "<span class='btn $style'>{$this->value}</span>";
