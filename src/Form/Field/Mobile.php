@@ -10,6 +10,7 @@ class Mobile extends Text
 
     protected static $js = [
         '/packages/admin/AdminLTE/plugins/input-mask/jquery.inputmask.bundle.min.js',
+        '/packages/admin/AdminLTE/plugins/input-mask/inputmask/phone-codes/phone.min.js',
     ];
 
     /**
@@ -18,17 +19,19 @@ class Mobile extends Text
      * @var array
      */
     protected $options = [
-        'mask' => '99999999999',
+        'mask' => '+99999999999',
     ];
 
     public function render()
     {
-        $options = json_encode($this->options);
+        if (!empty($this->options)) {
+            $options = json_encode($this->options);
+        } else {
+            $options = '"phone"';
+        }
 
-        $this->script = <<<EOT
+        $this->script = "$('{$this->getElementClassSelector()}').inputmask($options);";
 
-$('{$this->getElementClassSelector()}').inputmask($options);
-EOT;
         return parent::render();
     }
 }

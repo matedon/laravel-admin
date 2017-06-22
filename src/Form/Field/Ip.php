@@ -4,6 +4,8 @@ namespace MAteDon\Admin\Form\Field;
 
 class Ip extends Text
 {
+    protected $icon = 'fa-laptop';
+
     protected $rules = 'ip';
 
     protected static $js = [
@@ -24,12 +26,8 @@ class Ip extends Text
         $options = json_encode($this->options);
 
         $this->script = <<<EOT
-
 $('{$this->getElementClassSelector()}').inputmask($options);
 EOT;
-
-        $this->prepend('<i class="fa fa-laptop"></i>')
-            ->defaultAttribute('style', 'width: 130px');
 
         return parent::render();
     }

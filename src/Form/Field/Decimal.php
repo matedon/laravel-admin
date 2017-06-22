@@ -4,6 +4,8 @@ namespace MAteDon\Admin\Form\Field;
 
 class Decimal extends Text
 {
+    protected $icon = 'fa-terminal';
+
     protected static $js = [
         '/packages/admin/AdminLTE/plugins/input-mask/jquery.inputmask.bundle.min.js',
     ];
@@ -23,9 +25,6 @@ class Decimal extends Text
         $options = json_encode($this->options);
 
         $this->script = "$('{$this->getElementClassSelector()}').inputmask($options);";
-
-        $this->prepend('<i class="fa fa-terminal"></i>')
-            ->defaultAttribute('style', 'width: 130px');
 
         return parent::render();
     }

@@ -4,7 +4,7 @@ namespace MAteDon\Admin\Form\Field;
 
 class Currency extends Text
 {
-    protected $symbol = '$';
+    protected $icon = 'fa-dollar';
 
     protected static $js = [
         '/packages/admin/AdminLTE/plugins/input-mask/jquery.inputmask.bundle.min.js',
@@ -16,36 +16,22 @@ class Currency extends Text
      * @var array
      */
     protected $options = [
-        'alias'                 => 'currency',
-        'radixPoint'            => '.',
-        'prefix'                => '',
-        'removeMaskOnSubmit'    => true,
+        'alias'              => 'currency',
+        'radixPoint'         => '.',
+        'prefix'             => '',
+        'removeMaskOnSubmit' => true,
     ];
-
-    public function symbol($symbol)
-    {
-        $this->symbol = $symbol;
-
-        return $this;
-    }
 
     public function prepare($value)
     {
-        return (float) $value;
+        return (float)$value;
     }
 
     public function render()
     {
         $options = json_encode($this->options);
 
-        $this->script = <<<EOT
-
-$('{$this->getElementClassSelector()}').inputmask($options);
-
-EOT;
-
-        $this->prepend($this->symbol)
-            ->defaultAttribute('style', 'width: 120px');
+        $this->script = "$('{$this->getElementClassSelector()}').inputmask($options);";
 
         return parent::render();
     }
