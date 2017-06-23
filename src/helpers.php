@@ -154,3 +154,25 @@ if (!function_exists('array_extend')) {
         return $base;
     }
 }
+
+if (!function_exists('strip_tags_plus')) {
+    /*
+     * Extend arrays as in jQuery
+     * It's like array_merge_recursive but common depth values are overwritten.
+     */
+    function strip_tags_plus($value, $limit = null, $dots = '...')
+    {
+
+        $out = strip_tags($value);
+        $out = html_entity_decode($out);
+        $out = preg_replace('/\s+/', ' ', $out);
+        $out = preg_replace('/\r|\n/', '', $out);
+        if (!is_null($limit) and is_numeric($limit) and $limit < mb_strlen($out)) {
+            $out = mb_substr($out, 0, $limit);
+            if ($dots) {
+                $out .= $dots;
+            }
+        }
+        return $out;
+    }
+}

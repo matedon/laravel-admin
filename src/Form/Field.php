@@ -546,7 +546,10 @@ class Field implements Renderable
     public function value($value = null)
     {
         if (is_null($value)) {
-            return is_null($this->value) ? $this->getDefault() : $this->value;
+            if (is_null($this->value) or $this->value === 'null') {
+                return $this->getDefault();
+            }
+            return $this->value;
         }
 
         if (is_callable($value)) {
