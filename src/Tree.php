@@ -2,6 +2,8 @@
 
 namespace MAteDon\Admin;
 
+use Closure;
+use MAteDon\Admin\Tree\Tools;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,8 +35,8 @@ class Tree implements Renderable
      * @var string
      */
     protected $view = [
-        'tree'   => 'admin::menu.tree',
-        'branch' => 'admin::menu.branch',
+        'tree'   => 'admin::tree',
+        'branch' => 'admin::tree.branch',
     ];
 
     /**
@@ -53,9 +55,26 @@ class Tree implements Renderable
     public $useCreate = true;
 
     /**
+     * @var bool
+     */
+    public $useSave = true;
+
+    /**
+     * @var bool
+     */
+    public $useRefresh = true;
+
+    /**
      * @var array
      */
     protected $nestableOptions = [];
+
+    /**
+     * Header tools.
+     *
+     * @var Tools
+     */
+    public $tools;
 
     /**
      * Menu constructor.
@@ -69,11 +88,21 @@ class Tree implements Renderable
         $this->path = app('request')->getPathInfo();
         $this->elementId .= uniqid();
 
+        $this->setupTools();
+
         if ($callback instanceof \Closure) {
             call_user_func($callback, $this);
         }
 
         $this->initBranchCallback();
+    }
+
+    /**
+     * Setup tree tools.
+     */
+    public function setupTools()
+    {
+        $this->tools = new Tools($this);
     }
 
     /**
@@ -144,6 +173,26 @@ class Tree implements Renderable
     }
 
     /**
+     * Disable save.
+     *
+     * @return void
+     */
+    public function disableSave()
+    {
+        $this->useSave = false;
+    }
+
+    /**
+     * Disable refresh.
+     *
+     * @return void
+     */
+    public function disableRefresh()
+    {
+        $this->useRefresh = false;
+    }
+
+    /**
      * Save tree order from a input.
      *
      * @param string $serialize
@@ -161,6 +210,93 @@ class Tree implements Renderable
         $this->model->saveOrder($tree);
 
         return true;
+    }
+
+    /**
+     * Build tree grid scripts.
+     *
+     * @return string
+     */
+    protected function script()
+    {
+        $deleteConfirm = trans('admin.delete_confirm');
+        $saveSucceeded = trans('admin.save_succeeded');
+        $refreshSucceeded = trans('admin.refresh_succeeded');
+        $deleteSucceeded = trans('admin.delete_succeeded');
+        $confirm = trans('admin.confirm');
+        $cancel = trans('admin.cancel');
+
+        $nestableOptions = json_encode($this->nestableOptions);
+
+        return <<<SCRIPT
+
+        $('#{$this->elementId}').nestable($nestableOptions);
+
+        $('.tree_branch_delete').click(function() {
+            var id = $(this).data('id');
+            swal({
+              title: "$deleteConfirm",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#DD6B55",
+              confirmButtonText: "$confirm",
+              closeOnConfirm: false,
+              cancelButtonText: "$cancel"
+            },
+            function(){
+                $.ajax({
+                    method: 'post',
+                    url: '{$this->path}/' + id,
+                    data: {
+                        _method:'delete',
+                        _token:LA.token,
+                    },
+                    success: function (data) {
+                        $.pjax.reload('#pjax-container');
+
+                        if (typeof data === 'object') {
+                            if (data.status) {
+                                swal(data.message, '', 'success');
+                            } else {
+                                swal(data.message, '', 'error');
+                            }
+                        }
+                    }
+                });
+            });
+        });
+
+        $('.{$this->elementId}-save').click(function () {
+            var serialize = $('#{$this->elementId}').nestable('serialize');
+
+            $.post('{$this->path}', {
+                _token: LA.token,
+                _order: JSON.stringify(serialize)
+            },
+            function(data){
+                $.pjax.reload('#pjax-container');
+                toastr.success('{$saveSucceeded}');
+            });
+        });
+
+        $('.{$this->elementId}-refresh').click(function () {
+            $.pjax.reload('#pjax-container');
+            toastr.success('{$refreshSucceeded}');
+        });
+
+        $('.{$this->elementId}-tree-tools').on('click', function(e){
+            var target = $(e.target),
+                action = target.data('action');
+            if (action === 'expand') {
+                $('.dd').nestable('expandAll');
+            }
+            if (action === 'collapse') {
+                $('.dd').nestable('collapseAll');
+            }
+        });
+
+
+SCRIPT;
     }
 
     /**
@@ -190,24 +326,26 @@ class Tree implements Renderable
      */
     public function variables()
     {
-        $variables = [
-            'id'        => $this->elementId,
-            'items'     => $this->getItems(),
-            'useCreate' => $this->useCreate,
-            'dataSet'   => json_encode([
-                'path'     => $this->path,
-                'messages' => [
-                    'confirm' => trans('admin::lang.delete_confirm'),
-                    'save'    => trans('admin::lang.save_succeeded'),
-                    'refresh' => trans('admin::lang.refresh_succeeded'),
-                    'delete'  => trans('admin::lang.delete_succeeded'),
-                ]
-            ])
+        return [
+            'id'         => $this->elementId,
+            'tools'      => $this->tools->render(),
+            'items'      => $this->getItems(),
+            'useCreate'  => $this->useCreate,
+            'useSave'    => $this->useSave,
+            'useRefresh' => $this->useRefresh,
         ];
-        if (!empty($this->nestableOptions)) {
-            $variables['dataSet']['nestable'] = $this->nestableOptions;
-        }
-        return $variables;
+    }
+
+    /**
+     * Setup grid tools.
+     *
+     * @param Closure $callback
+     *
+     * @return void
+     */
+    public function tools(Closure $callback)
+    {
+        call_user_func($callback, $this->tools);
     }
 
     /**
@@ -217,6 +355,8 @@ class Tree implements Renderable
      */
     public function render()
     {
+        Admin::script($this->script());
+
         view()->share([
             'path'           => $this->path,
             'keyName'        => $this->model->getKeyName(),

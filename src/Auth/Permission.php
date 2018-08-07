@@ -3,7 +3,7 @@
 namespace MAteDon\Admin\Auth;
 
 use MAteDon\Admin\Facades\Admin;
-use MAteDon\Admin\Middleware\PjaxMiddleware;
+use MAteDon\Admin\Middleware\Pjax;
 use Illuminate\Support\Facades\Auth;
 
 class Permission
@@ -53,6 +53,16 @@ class Permission
     }
 
     /**
+     * Don't check permission.
+     *
+     * @return bool
+     */
+    public static function free()
+    {
+        return true;
+    }
+
+    /**
      * Roles denied to access.
      *
      * @param $roles
@@ -73,11 +83,11 @@ class Permission
     /**
      * Send error response page.
      */
-    protected static function error()
+    public static function error()
     {
-        $response = response(Admin::content()->withError(trans('admin::lang.deny')));
+        $response = response(Admin::content()->withError(trans('admin.deny')));
 
-        PjaxMiddleware::respond($response);
+        Pjax::respond($response);
     }
 
     /**

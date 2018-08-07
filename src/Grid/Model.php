@@ -2,9 +2,11 @@
 
 namespace MAteDon\Admin\Grid;
 
-use MAteDon\Admin\Middleware\PjaxMiddleware;
+use MAteDon\Admin\Grid;
+use MAteDon\Admin\Middleware\Pjax;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -76,6 +78,16 @@ class Model
     protected $collectionCallback;
 
     /**
+     * @var Grid
+     */
+    protected $grid;
+
+    /**
+     * @var Relation
+     */
+    protected $relation;
+
+    /**
      * Create a new grid model instance.
      *
      * @param EloquentModel $model
@@ -85,6 +97,22 @@ class Model
         $this->model = $model;
 
         $this->queries = collect();
+
+//        static::doNotSnakeAttributes($this->model);
+    }
+
+    /**
+     * Don't snake case attributes.
+     *
+     * @param EloquentModel $model
+     *
+     * @return void
+     */
+    protected static function doNotSnakeAttributes(EloquentModel $model)
+    {
+        $class = get_class($model);
+
+        $class::$snakeAttributes = false;
     }
 
     /**
@@ -156,6 +184,54 @@ class Model
     }
 
     /**
+     * @param Grid $grid
+     *
+     * @return $this
+     */
+    public function setGrid(Grid $grid)
+    {
+        $this->grid = $grid;
+
+        return $this;
+    }
+
+    /**
+     * @param Relation $relation
+     *
+     * @return $this
+     */
+    public function setRelation(Relation $relation)
+    {
+        $this->relation = $relation;
+
+        return $this;
+    }
+
+    /**
+     * @return Relation
+     */
+    public function getRelation()
+    {
+        return $this->relation;
+    }
+
+    /**
+     * Get constraints.
+     *
+     * @return array|bool
+     */
+    public function getConstraints()
+    {
+        if ($this->relation instanceof HasMany) {
+            return [
+                $this->relation->getForeignKeyName() => $this->relation->getParentKey(),
+            ];
+        }
+
+        return false;
+    }
+
+    /**
      * Set collection callback.
      *
      * @param \Closure $callback
@@ -172,9 +248,11 @@ class Model
     /**
      * Build.
      *
-     * @return array
+     * @param bool $toArray
+     *
+     * @return array|Collection|mixed
      */
-    public function buildData()
+    public function buildData($toArray = true)
     {
         if (empty($this->data)) {
             $collection = $this->get();
@@ -183,10 +261,37 @@ class Model
                 $collection = call_user_func($this->collectionCallback, $collection);
             }
 
-            $this->data = $collection;
+            if ($toArray) {
+                $this->data = $collection->toArray();
+            } else {
+                $this->data = $collection;
+            }
         }
 
         return $this->data;
+    }
+
+    /**
+     * @param callable $callback
+     * @param int      $count
+     *
+     * @return bool
+     */
+    public function chunk($callback, $count = 100)
+    {
+        if ($this->usePaginate) {
+            return $this->buildData(false)->chunk($count)->each($callback);
+        }
+
+        $this->setSort();
+
+        $this->queries->reject(function ($query) {
+            return $query['method'] == 'paginate';
+        })->each(function ($query) {
+            $this->model = $this->model->{$query['method']}(...$query['arguments']);
+        });
+
+        return $this->model->chunk($count, $callback);
     }
 
     /**
@@ -226,6 +331,10 @@ class Model
             return $this->model;
         }
 
+        if ($this->relation) {
+            $this->model = $this->relation->getQuery();
+        }
+
         $this->setSort();
         $this->setPaginate();
 
@@ -260,7 +369,7 @@ class Model
                 $paginator->getPageName() => $paginator->lastPage(),
             ]);
 
-            PjaxMiddleware::respond(redirect($lastPageUrl));
+            Pjax::respond(redirect($lastPageUrl));
         }
     }
 
@@ -313,6 +422,10 @@ class Model
 
         if (isset($paginate['arguments'][0])) {
             return $paginate['arguments'];
+        }
+
+        if ($name = $this->grid->getName()) {
+            return [$this->perPage, null, "{$name}_page"];
         }
 
         return [$this->perPage];
@@ -401,7 +514,7 @@ class Model
     public function resetOrderBy()
     {
         $this->queries = $this->queries->reject(function ($query) {
-            return $query['method'] == 'orderBy';
+            return $query['method'] == 'orderBy' || $query['method'] == 'orderByDesc';
         });
     }
 
@@ -442,6 +555,14 @@ class Model
     }
 
     /**
+     * @return EloquentModel
+     */
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    /**
      * @param string $method
      * @param array  $arguments
      *
@@ -469,13 +590,5 @@ class Model
         if (array_key_exists($key, $data)) {
             return $data[$key];
         }
-    }
-
-    /**
-     * @return EloquentModel
-     */
-    public function getModel()
-    {
-        return $this->model;
     }
 }

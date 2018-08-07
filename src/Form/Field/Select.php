@@ -9,58 +9,29 @@ use Illuminate\Support\Str;
 
 class Select extends Field
 {
+    /**
+     * @var array
+     */
     protected static $css = [
-        '/packages/admin/AdminLTE/plugins/select2/select2.min.css',
-        '/packages/admin/AdminLTE/plugins/select2/select2.custom.css',
+        '/vendor/laravel-admin/AdminLTE/plugins/select2/select2.min.css',
     ];
 
+    /**
+     * @var array
+     */
     protected static $js = [
-        '/packages/admin/AdminLTE/plugins/select2/select2.full.min.js',
+        '/vendor/laravel-admin/AdminLTE/plugins/select2/select2.full.min.js',
     ];
 
-    protected $icon = 'fa-level-down';
+    /**
+     * @var array
+     */
+    protected $groups = [];
 
-    public function prepare($value)
-    {
-        if ($value === 'null') {
-            return null;
-        }
-        return $value;
-    }
-
-    public function render()
-    {
-        $this->extendDataSet([
-            'select2' => [
-                'allowClear'  => true,
-                'placeholder' => $this->label,
-            ],
-        ]);
-
-        if ($this->options instanceof \Closure) {
-            if ($this->form) {
-                $this->options = $this->options->bindTo($this->form->model());
-            }
-
-            $this->options(call_user_func($this->options, $this->value));
-        }
-
-        $this->options = array_filter($this->options);
-
-        $this->value = is_null($this->value) ? 'null' : $this->value;
-        $this->value = $this->value ? $this->value : key($this->options);
-        $this->value = old($this->column, $this->value);
-
-        if ($this->icon) {
-            $this->prepend('<i class="fa fa-lg fa-fw ' . $this->icon . '"></i>');
-        }
-
-        return parent::render()->with([
-            'prepend' => $this->prepend,
-            'append'  => $this->append,
-            'options' => $this->options,
-        ]);
-    }
+    /**
+     * @var array
+     */
+    protected $config = [];
 
     /**
      * Set options.
@@ -73,7 +44,7 @@ class Select extends Field
     {
         // remote options
         if (is_string($options)) {
-            return call_user_func_array([$this, 'loadOptionsFromRemote'], func_get_args());
+            return $this->loadRemoteOptions(...func_get_args());
         }
 
         if ($options instanceof Arrayable) {
@@ -83,8 +54,37 @@ class Select extends Field
         if (is_callable($options)) {
             $this->options = $options;
         } else {
-            $this->options = (array)$options;
+            $this->options = (array) $options;
         }
+
+        return $this;
+    }
+
+    /**
+     * @param array $groups
+     */
+
+    /**
+     * Set option groups.
+     *
+     * eg: $group = [
+     *        [
+     *        'label' => 'xxxx',
+     *        'options' => [
+     *            1 => 'foo',
+     *            2 => 'bar',
+     *            ...
+     *        ],
+     *        ...
+     *     ]
+     *
+     * @param array $groups
+     *
+     * @return $this
+     */
+    public function groups(array $groups)
+    {
+        $this->groups = $groups;
 
         return $this;
     }
@@ -108,10 +108,8 @@ class Select extends Field
             $class = $field;
         }
 
-        // TODO: move all js code to scripts/fields/select.js
-
         $script = <<<EOT
-
+$(document).off('change', "{$this->getElementClassSelector()}");
 $(document).on('change', "{$this->getElementClassSelector()}", function () {
     var target = $(this).closest('.fields-group').find(".$class");
     $.get("$sourceUrl?q="+this.value, function (data) {
@@ -133,23 +131,73 @@ EOT;
     }
 
     /**
-     * Load options from remote.
+     * Load options for other selects on change.
      *
-     * @param string $url
-     * @param array $parameters
-     * @param array $options
+     * @param string $fields
+     * @param string $sourceUrls
+     * @param string $idField
+     * @param string $textField
      *
      * @return $this
      */
-    protected function loadOptionsFromRemote($url, $parameters = [], $options = [])
+    public function loads($fields = [], $sourceUrls = [], $idField = 'id', $textField = 'text')
+    {
+        $fieldsStr = implode('.', $fields);
+        $urlsStr = implode('^', $sourceUrls);
+        $script = <<<EOT
+var fields = '$fieldsStr'.split('.');
+var urls = '$urlsStr'.split('^');
+
+var refreshOptions = function(url, target) {
+    $.get(url).then(function(data) {
+        target.find("option").remove();
+        $(target).select2({
+            data: $.map(data, function (d) {
+                d.id = d.$idField;
+                d.text = d.$textField;
+                return d;
+            })
+        }).trigger('change');
+    });
+};
+
+$(document).off('change', "{$this->getElementClassSelector()}");
+$(document).on('change', "{$this->getElementClassSelector()}", function () {
+    var _this = this;
+    var promises = [];
+
+    fields.forEach(function(field, index){
+        var target = $(_this).closest('.fields-group').find('.' + fields[index]);
+        promises.push(refreshOptions(urls[index] + "?q="+ _this.value, target));
+    });
+
+    $.when(promises).then(function() {
+        console.log('开始更新其它select的选择options');
+    });
+});
+EOT;
+
+        Admin::script($script);
+
+        return $this;
+    }
+
+    /**
+     * Load options from remote.
+     *
+     * @param string $url
+     * @param array  $parameters
+     * @param array  $options
+     *
+     * @return $this
+     */
+    protected function loadRemoteOptions($url, $parameters = [], $options = [])
     {
         $ajaxOptions = [
-            'url' => $url . '?' . http_build_query($parameters),
+            'url' => $url.'?'.http_build_query($parameters),
         ];
 
         $ajaxOptions = json_encode(array_merge($ajaxOptions, $options));
-
-        // TODO: move all js code to scripts/fields/select.js
 
         $this->script = <<<EOT
 
@@ -173,16 +221,98 @@ EOT;
      */
     public function ajax($url, $idField = 'id', $textField = 'text')
     {
-        $this->extendDataSet([
-            'ajax'    => true,
-            'url'     => $url,
-            'fields'  => [
-                'id'   => $idField,
-                'text' => $textField
-            ],
-            'select2' => [],
-        ]);
+        $this->script = <<<EOT
+
+$("{$this->getElementClassSelector()}").select2({
+  ajax: {
+    url: "$url",
+    dataType: 'json',
+    delay: 250,
+    data: function (params) {
+      return {
+        q: params.term,
+        page: params.page
+      };
+    },
+    processResults: function (data, params) {
+      params.page = params.page || 1;
+
+      return {
+        results: $.map(data.data, function (d) {
+                   d.id = d.$idField;
+                   d.text = d.$textField;
+                   return d;
+                }),
+        pagination: {
+          more: data.next_page_url
+        }
+      };
+    },
+    cache: true
+  },
+  minimumInputLength: 1,
+  escapeMarkup: function (markup) {
+      return markup;
+  }
+});
+
+EOT;
 
         return $this;
+    }
+
+    /**
+     * Set config for select2.
+     *
+     * all configurations see https://select2.org/configuration/options-api
+     *
+     * @param string $key
+     * @param mixed  $val
+     *
+     * @return $this
+     */
+    public function config($key, $val)
+    {
+        $this->config[$key] = $val;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function render()
+    {
+        $configs = array_merge([
+            'allowClear'  => true,
+            'placeholder' => $this->label,
+        ], $this->config);
+
+        $configs = json_encode($configs);
+
+        if (empty($this->script)) {
+            $this->script = "$(\"{$this->getElementClassSelector()}\").select2($configs);";
+        }
+
+        if ($this->options instanceof \Closure) {
+            if ($this->form) {
+                $this->options = $this->options->bindTo($this->form->model());
+            }
+
+            $this->options(call_user_func($this->options, $this->value));
+        }
+
+        $this->options = array_filter($this->options);
+
+        if ($this->icon) {
+            $this->prepend('<i class="fa fa-lg fa-fw ' . $this->icon . '"></i>');
+        }
+
+        $this->addVariables([
+            'options' => $this->options,
+            'groups'  => $this->groups,
+        ]);
+
+        return parent::render();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
-use MAteDon\Admin\Auth\Database\Administrator;
-use MAteDon\Admin\Auth\Database\Menu;
+use Encore\Admin\Auth\Database\Administrator;
+use Encore\Admin\Auth\Database\Menu;
 
 class MenuTest extends TestCase
 {
@@ -34,7 +34,7 @@ class MenuTest extends TestCase
             ->submitForm('Submit', $item)
             ->seePageIs('admin/auth/menu')
             ->seeInDatabase(config('admin.database.menu_table'), $item)
-            ->assertEquals(12, Menu::count());
+            ->assertEquals(8, Menu::count());
 
         $this->expectException(\Laravel\BrowserKitTesting\HttpException::class);
 
@@ -53,10 +53,10 @@ class MenuTest extends TestCase
     {
         $this->visit('admin/auth/menu/1/edit')
             ->see('Menu')
-            ->submitForm('Submit', ['title' => 'blablabla'])
+            ->submitForm('Save', ['title' => 'blablabla'])
             ->seePageIs('admin/auth/menu')
             ->seeInDatabase(config('admin.database.menu_table'), ['title' => 'blablabla'])
-            ->assertEquals(11, Menu::count());
+            ->assertEquals(7, Menu::count());
     }
 
     public function testShowPage()
@@ -71,6 +71,6 @@ class MenuTest extends TestCase
 
         $this->visit('admin/auth/menu/5/edit')
             ->see('Menu')
-            ->submitForm('Submit', ['parent_id' => 5]);
+            ->submitForm('Save', ['parent_id' => 5]);
     }
 }

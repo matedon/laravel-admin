@@ -7,6 +7,11 @@ use MAteDon\Admin\Grid;
 class CreateButton extends AbstractTool
 {
     /**
+     * @var Grid
+     */
+    protected $grid;
+
+    /**
      * Create a new CreateButton instance.
      *
      * @param Grid $grid
@@ -27,12 +32,12 @@ class CreateButton extends AbstractTool
             return '';
         }
 
-        $new = trans('admin::lang.new');
+        $new = trans('admin.new');
 
         return <<<EOT
 
 <div class="btn-group pull-right" style="margin-right: 10px">
-    <a href="{$this->grid->resource()}/create" class="btn btn-sm btn-success">
+    <a href="{$this->grid->getCreateUrl()}" class="btn btn-sm btn-success">
         <i class="fa fa-save"></i>&nbsp;&nbsp;{$new}
     </a>
 </div>

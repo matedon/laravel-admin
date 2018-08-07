@@ -1,10 +1,11 @@
 <?php
 
-namespace MAteDon\Admin\Auth\Database;
+namespace Encore\Admin\Auth\Database;
 
 use MAteDon\Admin\Traits\AdminBuilder;
 use MAteDon\Admin\Traits\ModelTree;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -16,7 +17,9 @@ use Illuminate\Support\Facades\DB;
  */
 class Menu extends Model
 {
-    use ModelTree, AdminBuilder;
+    use AdminBuilder, ModelTree {
+        ModelTree::boot as treeBoot;
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -44,9 +47,9 @@ class Menu extends Model
     /**
      * A Menu belongs to many roles.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
-    public function roles()
+    public function roles() : BelongsToMany
     {
         $pivotTable = config('admin.database.role_menu_table');
 
@@ -58,11 +61,27 @@ class Menu extends Model
     /**
      * @return array
      */
-    public function allNodes()
+    public function allNodes() : array
     {
-        $orderColumn = DB::getQueryGrammar()->wrap($this->orderColumn);
+        $connection = config('admin.database.connection') ?: config('database.default');
+        $orderColumn = DB::connection($connection)->getQueryGrammar()->wrap($this->orderColumn);
+
         $byOrder = $orderColumn.' = 0,'.$orderColumn;
 
         return static::with('roles')->orderByRaw($byOrder)->get()->toArray();
+    }
+
+    /**
+     * Detach models from the relationship.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        static::treeBoot();
+
+        static::deleting(function ($model) {
+            $model->roles()->detach();
+        });
     }
 }

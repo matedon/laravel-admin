@@ -9,7 +9,7 @@ class InfoBox extends Widget implements Renderable
     /**
      * @var string
      */
-    protected $view = 'admin::widgets.infoBox';
+    protected $view = 'admin::widgets.info-box';
 
     /**
      * @var array
@@ -28,10 +28,10 @@ class InfoBox extends Widget implements Renderable
     public function __construct($name, $icon, $color, $link, $info)
     {
         $this->data = [
-            'name'  => $name,
-            'icon'  => $icon,
-            'link'  => $link,
-            'info'  => $info,
+            'name' => $name,
+            'icon' => $icon,
+            'link' => $link,
+            'info' => $info,
         ];
 
         $this->class("small-box bg-$color");

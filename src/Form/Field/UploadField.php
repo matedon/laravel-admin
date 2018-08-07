@@ -2,6 +2,7 @@
 
 namespace MAteDon\Admin\Form\Field;
 
+use MAteDon\Admin\Form;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\MessageBag;
@@ -37,9 +38,10 @@ trait UploadField
      */
     protected $useUniqueName = false;
 
-    protected $deleteUrl = false;
-
-    protected $deleteExtraData = false;
+    /**
+     * @var bool
+     */
+    protected $removable = false;
 
     /**
      * Initialize the storage instance.
@@ -61,17 +63,21 @@ trait UploadField
         $defaultOptions = [
             'overwriteInitial'     => false,
             'initialPreviewAsData' => true,
-            'browseLabel'          => trans('admin::lang.browse'),
+            'browseLabel'          => trans('admin.browse'),
             'showRemove'           => false,
             'showUpload'           => false,
-            'initialCaption'       => $this->initialCaption($this->value),
-            'deleteExtraData'      => [
-                'column'                 => $this->column,
-                static::FILE_DELETE_FLAG => '',
-                '_token'                 => csrf_token(),
-                '_method'                => 'PUT',
+//            'initialCaption'       => $this->initialCaption($this->value),
+            'deleteExtraData' => [
+                $this->formatName($this->column) => static::FILE_DELETE_FLAG,
+                static::FILE_DELETE_FLAG         => '',
+                '_token'                         => csrf_token(),
+                '_method'                        => 'PUT',
             ],
         ];
+
+        if ($this->form instanceof Form) {
+            $defaultOptions['deleteUrl'] = $this->form->resource().'/'.$this->form->model()->getKey();
+        }
 
         $this->options($defaultOptions);
     }
@@ -83,23 +89,24 @@ trait UploadField
      */
     protected function setupPreviewOptions()
     {
-        $deleteUrl = isset($this->options['deleteUrl']) and $this->options['deleteUrl'];
+        if (!$this->removable) {
+            return;
+        }
+
         $this->options([
-            'initialPreview'       => $this->preview(),
-            'initialPreviewConfig' => $this->initialPreviewConfig($deleteUrl),
+            //'initialPreview'        => $this->preview(),
+            'initialPreviewConfig' => $this->initialPreviewConfig(),
         ]);
     }
 
-    public function deleteUrl($url)
+    /**
+     * Allow use to remove file.
+     *
+     * @return $this
+     */
+    public function removable()
     {
-        $this->options['deleteUrl'] = $url;
-
-        return $this;
-    }
-
-    public function deleteExtraData($data)
-    {
-        $this->deleteExtraData = $data;
+        $this->removable = true;
 
         return $this;
     }
@@ -113,7 +120,7 @@ trait UploadField
      */
     public function options($options = [])
     {
-        $this->options = array_merge_recursive($options, $this->options);
+        $this->options = array_merge($options, $this->options);
 
         return $this;
     }
@@ -144,7 +151,7 @@ trait UploadField
     /**
      * Specify the directory and name for upload file.
      *
-     * @param string $directory
+     * @param string      $directory
      * @param null|string $name
      *
      * @return $this
@@ -215,10 +222,8 @@ trait UploadField
             return $this->generateUniqueName($file);
         }
 
-        if (is_callable($this->name)) {
-            $callback = $this->name->bindTo($this);
-
-            return call_user_func($callback, $file);
+        if ($this->name instanceof \Closure) {
+            return $this->name->call($this, $file);
         }
 
         if (is_string($this->name)) {
@@ -253,11 +258,7 @@ trait UploadField
     {
         $this->renameIfExists($file);
 
-        $target = $this->getDirectory() . '/' . $this->name;
-
-        $this->storage->put($target, file_get_contents($file->getRealPath()));
-
-        return $target;
+        return $this->storage->putFileAs($this->getDirectory(), $file, $this->name);
     }
 
     /**
@@ -287,7 +288,11 @@ trait UploadField
             return $path;
         }
 
-        return rtrim(config('admin.upload.host'), '/') . '/' . trim($path, '/');
+        if ($this->storage) {
+            return $this->storage->url($path);
+        }
+
+        return Storage::disk(config('admin.upload.disk'))->url($path);
     }
 
     /**
@@ -299,7 +304,7 @@ trait UploadField
      */
     protected function generateUniqueName(UploadedFile $file)
     {
-        return md5(uniqid()) . '.' . $file->guessExtension();
+        return md5(uniqid()).'.'.$file->getClientOriginalExtension();
     }
 
     /**

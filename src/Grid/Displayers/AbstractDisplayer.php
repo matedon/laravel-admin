@@ -96,7 +96,7 @@ abstract class AbstractDisplayer
      */
     protected function trans($text)
     {
-        return trans("admin::lang.$text");
+        return trans("admin.$text");
     }
 
     /**

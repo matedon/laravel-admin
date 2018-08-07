@@ -9,8 +9,8 @@ First define the tool class `app/Admin/Extensions/Tools/UserGender.php`：
 
 namespace App\Admin\Extensions\Tools;
 
-use MAteDon\Admin\Admin;
-use MAteDon\Admin\Grid\Tools\AbstractTool;
+use Encore\Admin\Admin;
+use Encore\Admin\Grid\Tools\AbstractTool;
 use Illuminate\Support\Facades\Request;
 
 class UserGender extends AbstractTool
@@ -98,7 +98,7 @@ First define the tool class `app/Admin/Extensions/Tools/ReleasePost.php`：
 
 namespace App\Admin\Extensions\Tools;
 
-use MAteDon\Admin\Grid\Tools\BatchAction;
+use Encore\Admin\Grid\Tools\BatchAction;
 
 class ReleasePost extends BatchAction
 {
@@ -117,7 +117,7 @@ $('{$this->getElementClass()}').on('click', function() {
 
     $.ajax({
         method: 'post',
-        url: '/{$this->resource}/release',
+        url: '{$this->resource}/release',
         data: {
             _token:LA.token,
             ids: selectedRows(),
@@ -173,53 +173,3 @@ $router->post('posts/release', 'PostController@release');
 ```
 
 This completes the entire process.
-
-## Custom export
-
-`model-grid`default only simple csv file export function, if you want to control the export format or export field, you can use the following way to customize the export function
-
-Create a new export class, for example`app/Admin/Extensions/CustomExporter.php`：
-
-```php
-<?php
-
-namespace App\Admin\Extensions;
-
-use MAteDon\Admin\Grid\Exporters\AbstractExporter;
-
-class CustomExporter extends AbstractExporter
-{
-    public function export()
-    {
-        $filename = $this->getTable().'.csv';
-
-        // Get data like this
-        dd($this->getData());
-
-        // According to the above data splicing out of the data.
-        $output = '';
-
-        // Control the format you want to export here, or use a third-party library to export Excel files
-        $headers = [
-            'Content-Encoding'    => 'UTF-8',
-            'Content-Type'        => 'text/csv;charset=UTF-8',
-            'Content-Disposition' => "attachment; filename=\"$filename\"",
-        ];
-
-        // export file
-        response(rtrim($output, "\n"), 200, $headers)->send();
-
-        exit;
-    }
-}
-```
-
-And then use in the grid:
-```php
-use App\Admin\Extensions\CustomExporter;
-
-...
-
-$grid->exporter(new CustomExporter());
-```
-Well, export the logic of the class can refer to [CsvExporter.php](https://github.com/z-song/laravel-admin/blob/1.3/src/Grid/Exporters/CsvExporter.php)

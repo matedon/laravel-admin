@@ -7,25 +7,18 @@ use MAteDon\Admin\Form\Field;
 class SwitchField extends Field
 {
     protected static $css = [
-        '/packages/admin/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css',
+        '/vendor/laravel-admin/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css',
     ];
 
     protected static $js = [
-        '/packages/admin/bootstrap-switch/dist/js/bootstrap-switch.min.js',
+        '/vendor/laravel-admin/bootstrap-switch/dist/js/bootstrap-switch.min.js',
     ];
 
     protected $states = [
         'null' => ['value' => null, 'text' => 'UNSET', 'color' => 'warning'],
-        'off'  => ['value' => 0, 'text' => 'OFF', 'color' => 'default'],
-        'on'   => ['value' => 1, 'text' => 'ON', 'color' => 'primary'],
+        'on'  => ['value' => 1, 'text' => 'ON', 'color' => 'primary'],
+        'off' => ['value' => 0, 'text' => 'OFF', 'color' => 'default'],
     ];
-
-    public function __construct($column, $arguments = [], $modelName = '')
-    {
-        $this->states['off']['text'] = admin_translate($modelName, $this->states['off']['text']);
-        $this->states['on']['text'] = admin_translate($modelName, $this->states['on']['text']);
-        parent::__construct($column, $arguments, $modelName);
-    }
 
     public function states($states = [])
     {
@@ -62,6 +55,9 @@ class SwitchField extends Field
                 'offColor'      => $this->states['off']['color'],
                 'onColor'       => $this->states['on']['color'],
                 'indeterminate' => ($fieldValue === false ? true : false),
+                'onSwitchChange' => "function(event, state) {
+                    $(event.target).closest('.bootstrap-switch').next().val(state ? 'on' : 'off').change();
+                }",
             ],
         ], $this->options));
 

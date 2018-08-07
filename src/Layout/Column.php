@@ -2,6 +2,7 @@
 
 namespace MAteDon\Admin\Layout;
 
+use Encore\Admin\Grid;
 use Illuminate\Contracts\Support\Renderable;
 
 class Column implements Buildable
@@ -56,9 +57,13 @@ class Column implements Buildable
      */
     public function row($content)
     {
-        $row = new Row();
+        if (!$content instanceof \Closure) {
+            $row = new Row($content);
+        } else {
+            $row = new Row();
 
-        call_user_func($content, $row);
+            call_user_func($content, $row);
+        }
 
         ob_start();
 
@@ -79,7 +84,7 @@ class Column implements Buildable
         $this->startColumn();
 
         foreach ($this->contents as $content) {
-            if ($content instanceof Renderable) {
+            if ($content instanceof Renderable || $content instanceof Grid) {
                 echo $content->render();
             } else {
                 echo (string) $content;

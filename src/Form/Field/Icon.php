@@ -11,11 +11,10 @@ class Icon extends Text
     protected $view = 'admin::form.icon';
 
     protected static $css = [
-        '/packages/admin/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css',
-        '/packages/admin/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.custom.css',
+        '/vendor/laravel-admin/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css',
     ];
 
     protected static $js = [
-        '/packages/admin/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js',
+        '/vendor/laravel-admin/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js',
     ];
 }

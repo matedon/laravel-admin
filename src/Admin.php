@@ -1,6 +1,6 @@
 <?php
 
-namespace MAteDon\Admin;
+namespace Encore\Admin;
 
 use Closure;
 use MAteDon\Admin\Auth\Database\Menu;
@@ -38,10 +38,15 @@ class Admin
     public static $js = [];
 
     /**
+     * @var array
+     */
+    public static $extensions = [];
+
+    /**
      * @param $model
      * @param Closure $callable
      *
-     * @return \MAteDon\Admin\Grid
+     * @return \Encore\Admin\Grid
      */
     public function grid($model, Closure $callable)
     {
@@ -52,7 +57,7 @@ class Admin
      * @param $model
      * @param Closure $callable
      *
-     * @return \MAteDon\Admin\Form
+     * @return \Encore\Admin\Form
      */
     public function form($model, Closure $callable)
     {
@@ -64,7 +69,7 @@ class Admin
      *
      * @param $model
      *
-     * @return \MAteDon\Admin\Tree
+     * @return \Encore\Admin\Tree
      */
     public function tree($model, Closure $callable = null)
     {
@@ -72,9 +77,22 @@ class Admin
     }
 
     /**
+     * Build show page.
+     *
+     * @param $model
+     * @param mixed $callable
+     *
+     * @return Show
+     */
+    public function show($model, $callable = null)
+    {
+        return new Show($this->getModel($model), $callable);
+    }
+
+    /**
      * @param Closure $callable
      *
-     * @return \MAteDon\Admin\Layout\Content
+     * @return \Encore\Admin\Layout\Content
      */
     public function content(Closure $callable = null)
     {
@@ -97,21 +115,6 @@ class Admin
         }
 
         throw new InvalidArgumentException("$model is not a valid model");
-    }
-
-    /**
-     * Get namespace of controllers.
-     *
-     * @return string
-     */
-    public function controllerNamespace()
-    {
-        $directory = config('admin.directory');
-
-        return ltrim(implode('\\',
-              array_map('ucfirst',
-                  explode(DIRECTORY_SEPARATOR, str_replace(app()->basePath(), '', $directory)))), '\\')
-              .'\\Controllers';
     }
 
     /**
@@ -175,24 +178,6 @@ class Admin
     }
 
     /**
-     * Admin url.
-     *
-     * @param $url
-     *
-     * @return string
-     */
-    public static function url($url)
-    {
-        $prefix = (string) config('admin.prefix');
-
-        if (empty($prefix) || $prefix == '/') {
-            return '/'.trim($url, '/');
-        }
-
-        return "/$prefix/".trim($url, '/');
-    }
-
-    /**
      * Left sider-bar menu.
      *
      * @return array
@@ -225,17 +210,23 @@ class Admin
     /**
      * Set navbar.
      *
-     * @param Closure $builder
+     * @param Closure|null $builder
+     *
+     * @return Navbar
      */
-    public function navbar(Closure $builder)
+    public function navbar(Closure $builder = null)
     {
+        if (is_null($builder)) {
+            return $this->getNavbar();
+        }
+
         call_user_func($builder, $this->getNavbar());
     }
 
     /**
      * Get navbar object.
      *
-     * @return \MAteDon\Admin\Widgets\Navbar
+     * @return \Encore\Admin\Widgets\Navbar
      */
     public function getNavbar()
     {
@@ -246,19 +237,25 @@ class Admin
         return $this->navbar;
     }
 
+    /**
+     * Register the auth routes.
+     *
+     * @return void
+     */
     public function registerAuthRoutes()
     {
         $attributes = [
-            'prefix'        => config('admin.prefix'),
-            'namespace'     => 'MAteDon\Admin\Controllers',
-            'middleware'    => ['web', 'admin'],
+            'prefix'     => config('admin.route.prefix'),
+            'namespace'  => 'MAteDon\Admin\Controllers',
+            'middleware' => config('admin.route.middleware'),
         ];
 
         Route::group($attributes, function ($router) {
-            $attributes = ['middleware' => 'admin.permission:allow,administrator'];
 
             /* @var \Illuminate\Routing\Router $router */
-            $router->group($attributes, function ($router) {
+            $router->group([], function ($router) {
+
+                /* @var \Illuminate\Routing\Router $router */
                 $router->resource('auth/users', 'UserController');
                 $router->resource('auth/roles', 'RoleController');
                 $router->resource('auth/permissions', 'PermissionController');
@@ -274,22 +271,16 @@ class Admin
         });
     }
 
-    public function registerHelpersRoutes($attributes = [])
+    /**
+     * Extend a extension.
+     *
+     * @param string $name
+     * @param string $class
+     *
+     * @return void
+     */
+    public static function extend($name, $class)
     {
-        $attributes = array_merge([
-            'prefix'     => trim(config('admin.prefix'), '/').'/helpers',
-            'middleware' => ['web', 'admin'],
-        ], $attributes);
-
-        Route::group($attributes, function ($router) {
-
-            /* @var \Illuminate\Routing\Router $router */
-            $router->get('terminal/database', 'MAteDon\Admin\Controllers\TerminalController@database');
-            $router->post('terminal/database', 'MAteDon\Admin\Controllers\TerminalController@runDatabase');
-            $router->get('terminal/artisan', 'MAteDon\Admin\Controllers\TerminalController@artisan');
-            $router->post('terminal/artisan', 'MAteDon\Admin\Controllers\TerminalController@runArtisan');
-            $router->get('scaffold', 'MAteDon\Admin\Controllers\ScaffoldController@index');
-            $router->post('scaffold', 'MAteDon\Admin\Controllers\ScaffoldController@store');
-        });
+        static::$extensions[$name] = $class;
     }
 }

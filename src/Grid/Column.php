@@ -1,6 +1,6 @@
 <?php
 
-namespace MAteDon\Admin\Grid;
+namespace Encore\Admin\Grid;
 
 use Closure;
 use MAteDon\Admin\Grid;
@@ -109,6 +109,8 @@ class Column
      */
     protected static $model;
 
+    const SELECT_COLUMN_NAME = '__row_selector__';
+
     /**
      * @param string $name
      * @param string $label
@@ -135,7 +137,7 @@ class Column
      * Define a column globally.
      *
      * @param string $name
-     * @param mixed $definition
+     * @param mixed  $definition
      */
     public static function define($name, $definition)
     {
@@ -180,6 +182,7 @@ class Column
      * Set column attributes.
      *
      * @param array $attributes
+     *
      * @return $this
      */
     public function setAttributes($attributes = [])
@@ -193,6 +196,7 @@ class Column
      * Get column attributes.
      *
      * @param string $name
+     *
      * @return mixed
      */
     public static function getAttributes($name)
@@ -204,6 +208,7 @@ class Column
      * Set style of this column.
      *
      * @param string $style
+     *
      * @return Column
      */
     public function style($style)
@@ -268,7 +273,7 @@ class Column
      */
     protected function isRelation()
     {
-        return (bool)$this->relation;
+        return (bool) $this->relation;
     }
 
     /**
@@ -281,20 +286,6 @@ class Column
         $this->sortable = true;
 
         return $this;
-    }
-
-    /**
-     * Alias for `display()` method.
-     *
-     * @param Closure $callable
-     *
-     * @deprecated please use `display()` method instead.
-     *
-     * @return $this
-     */
-    public function value(Closure $callable)
-    {
-        return $this->display($callable);
     }
 
     /**
@@ -312,6 +303,25 @@ class Column
     }
 
     /**
+     * Display column using array value map.
+     *
+     * @param array $values
+     * @param null  $default
+     *
+     * @return $this
+     */
+    public function using(array $values, $default = null)
+    {
+        return $this->display(function ($value) use ($values, $default) {
+            if (is_null($value)) {
+                return $default;
+            }
+
+            return array_get($values, $value, $default);
+        });
+    }
+
+    /**
      * If has display callbacks.
      *
      * @return bool
@@ -325,7 +335,7 @@ class Column
      * Call all of the "display" callbacks column.
      *
      * @param mixed $value
-     * @param int $key
+     * @param int   $key
      *
      * @return mixed
      */
@@ -343,7 +353,7 @@ class Column
      * Set original grid data to column.
      *
      * @param Closure $callback
-     * @param int $key
+     * @param int     $key
      *
      * @return Closure
      */
@@ -465,10 +475,9 @@ class Column
         }
 
         $query = app('request')->all();
-        $query = array_merge($query,
-            [$this->grid->model()->getSortName() => ['column' => $this->name, 'type' => $type]]);
+        $query = array_merge($query, [$this->grid->model()->getSortName() => ['column' => $this->name, 'type' => $type]]);
 
-        $url = URL::current() . '?' . http_build_query($query);
+        $url = URL::current().'?'.http_build_query($query);
 
         return "<a class=\"fa fa-fw $icon\" href=\"$url\"></a>";
     }
@@ -493,7 +502,7 @@ class Column
      * Find a displayer to display column.
      *
      * @param string $abstract
-     * @param array $arguments
+     * @param array  $arguments
      *
      * @return Column
      */
@@ -510,7 +519,7 @@ class Column
      * Call Illuminate/Support displayer.
      *
      * @param string $abstract
-     * @param array $arguments
+     * @param array  $arguments
      *
      * @return Column
      */
@@ -533,7 +542,7 @@ class Column
      * Call Builtin displayer.
      *
      * @param string $abstract
-     * @param array $arguments
+     * @param array  $arguments
      *
      * @return Column
      */
@@ -541,7 +550,7 @@ class Column
     {
         if ($abstract instanceof Closure) {
             return $this->display(function ($value) use ($abstract, $arguments) {
-                return call_user_func_array($abstract->bindTo($this), array_merge([$value], $arguments));
+                return $abstract->call($this, ...array_merge([$value], $arguments));
             });
         }
 
@@ -565,7 +574,7 @@ class Column
      * Allow fluent calls on the Column object.
      *
      * @param string $method
-     * @param array $arguments
+     * @param array  $arguments
      *
      * @return $this
      */

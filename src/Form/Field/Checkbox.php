@@ -9,11 +9,11 @@ class Checkbox extends MultipleSelect
     protected $inline = true;
 
     protected static $css = [
-        '/packages/admin/AdminLTE/plugins/iCheck/all.css',
+        '/vendor/laravel-admin/AdminLTE/plugins/iCheck/all.css',
     ];
 
     protected static $js = [
-        'packages/admin/AdminLTE/plugins/iCheck/icheck.min.js',
+        '/vendor/laravel-admin/AdminLTE/plugins/iCheck/icheck.min.js',
     ];
 
     /**
@@ -36,18 +36,26 @@ class Checkbox extends MultipleSelect
 
     /**
      * Draw inline checkboxes.
+     *
+     * @return $this
      */
     public function inline()
     {
         $this->inline = true;
+
+        return $this;
     }
 
     /**
      * Draw stacked checkboxes.
+     *
+     * @return $this
      */
     public function stacked()
     {
         $this->inline = false;
+
+        return $this;
     }
 
     /**

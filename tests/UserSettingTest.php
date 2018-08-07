@@ -33,7 +33,7 @@ class UserSettingTest extends TestCase
         ];
 
         $this->visit('admin/auth/setting')
-            ->submitForm('Submit', $data)
+            ->submitForm('Save', $data)
             ->seePageIs('admin/auth/setting');
 
         $this->seeInDatabase('admin_users', ['name' => $data['name']]);
@@ -41,16 +41,16 @@ class UserSettingTest extends TestCase
 
     public function testUpdateAvatar()
     {
-        File::cleanDirectory(public_path('upload/image'));
+        File::cleanDirectory(public_path('uploads/images'));
 
         $this->visit('admin/auth/setting')
             ->attach(__DIR__.'/assets/test.jpg', 'avatar')
-            ->press('Submit')
+            ->press('Save')
             ->seePageIs('admin/auth/setting');
 
         $avatar = Administrator::first()->avatar;
 
-        $this->assertEquals('http://localhost:8000/upload/image/test.jpg', $avatar);
+        $this->assertEquals('http://localhost:8000/uploads/images/test.jpg', $avatar);
     }
 
     public function testUpdatePasswordConfirmation()
@@ -61,7 +61,7 @@ class UserSettingTest extends TestCase
         ];
 
         $this->visit('admin/auth/setting')
-            ->submitForm('Submit', $data)
+            ->submitForm('Save', $data)
             ->seePageIs('admin/auth/setting')
             ->see('The Password confirmation does not match.');
     }
@@ -74,7 +74,7 @@ class UserSettingTest extends TestCase
         ];
 
         $this->visit('admin/auth/setting')
-            ->submitForm('Submit', $data)
+            ->submitForm('Save', $data)
             ->seePageIs('admin/auth/setting');
 
         $this->assertTrue(app('hash')->check($data['password'], Administrator::first()->makeVisible('password')->password));

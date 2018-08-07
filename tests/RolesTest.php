@@ -58,7 +58,7 @@ class RolesTest extends TestCase
 
         $this->visit('admin/auth/users/2/edit')
             ->see('Edit')
-            ->submitForm('Submit', ['roles' => [2]])
+            ->submitForm('Save', ['roles' => [2]])
             ->seePageIs('admin/auth/users')
             ->seeInDatabase(config('admin.database.role_users_table'), ['user_id' => 2, 'role_id' => 2]);
 
@@ -88,11 +88,18 @@ class RolesTest extends TestCase
 
     public function testEditRole()
     {
-        $this->visit('admin/auth/roles/1/edit')
+        $this->visit('admin/auth/roles/create')
             ->see('Roles')
-            ->submitForm('Submit', ['name' => 'blablabla'])
+            ->submitForm('Submit', ['slug' => 'developer', 'name' => 'Developer...'])
+            ->seePageIs('admin/auth/roles')
+            ->seeInDatabase(config('admin.database.roles_table'), ['slug' => 'developer', 'name' => 'Developer...'])
+            ->assertEquals(2, Role::count());
+
+        $this->visit('admin/auth/roles/2/edit')
+            ->see('Roles')
+            ->submitForm('Save', ['name' => 'blablabla'])
             ->seePageIs('admin/auth/roles')
             ->seeInDatabase(config('admin.database.roles_table'), ['name' => 'blablabla'])
-            ->assertEquals(1, Role::count());
+            ->assertEquals(2, Role::count());
     }
 }

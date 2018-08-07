@@ -5,6 +5,7 @@ namespace MAteDon\Admin\Grid;
 use MAteDon\Admin\Grid;
 use MAteDon\Admin\Grid\Tools\AbstractTool;
 use MAteDon\Admin\Grid\Tools\BatchActions;
+use MAteDon\Admin\Grid\Tools\FilterButton;
 use MAteDon\Admin\Grid\Tools\RefreshButton;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\Collection;
@@ -44,9 +45,9 @@ class Tools implements Renderable
      */
     protected function appendDefaultTools()
     {
-        $this->append(new BatchActions());
-
-        $this->append(new RefreshButton());
+        $this->append(new BatchActions())
+            ->append(new RefreshButton())
+            ->append(new FilterButton());
     }
 
     /**

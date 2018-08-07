@@ -9,7 +9,7 @@ class Row
      *
      * @var
      */
-    protected $number;
+    public $number;
 
     /**
      * Row data.
@@ -56,18 +56,6 @@ class Row
     public function getKey()
     {
         return $this->model->getKey();
-    }
-
-    /**
-     * Get the value of the model's primary key.
-     *
-     * @return mixed
-     *
-     * @deprecated Use `getKey()` instead.
-     */
-    public function id()
-    {
-        return $this->getKey();
     }
 
     /**
@@ -191,9 +179,8 @@ class Row
             return $this->dump($column);
         }
 
-        if (is_callable($value)) {
-            $value = $value->bindTo($this);
-            $value = $value($this->column($name));
+        if ($value instanceof \Closure) {
+            $value = $value->call($this, $this->column($name));
         }
 
         array_set($this->data, $name, $value);

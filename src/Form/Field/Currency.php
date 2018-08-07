@@ -6,8 +6,10 @@ class Currency extends Text
 {
     protected $icon = 'fa-dollar';
 
+    protected $symbol = '$';
+
     protected static $js = [
-        '/packages/admin/AdminLTE/plugins/input-mask/jquery.inputmask.bundle.min.js',
+        '/vendor/laravel-admin/AdminLTE/plugins/input-mask/jquery.inputmask.bundle.min.js',
     ];
 
     /**
@@ -22,16 +24,30 @@ class Currency extends Text
         'removeMaskOnSubmit' => true,
     ];
 
+    public function symbol($symbol)
+    {
+        $this->symbol = $symbol;
+
+        return $this;
+    }
+
     public function prepare($value)
     {
-        return (float)$value;
+        return (float) $value;
     }
 
     public function render()
     {
         $options = json_encode($this->options);
 
-        $this->script = "$('{$this->getElementClassSelector()}').inputmask($options);";
+        $this->script = <<<EOT
+
+$('{$this->getElementClassSelector()}').inputmask($options);
+
+EOT;
+
+        $this->prepend($this->symbol)
+            ->defaultAttribute('style', 'width: 120px');
 
         return parent::render();
     }

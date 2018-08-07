@@ -1,13 +1,15 @@
 <?php
 
-namespace MAteDon\Admin;
+namespace Encore\Admin;
 
 use Closure;
-use MAteDon\Admin\Exception\Handle;
+use MAteDon\Admin\Exception\Handler;
 use MAteDon\Admin\Form\Builder;
 use MAteDon\Admin\Form\Field;
 use MAteDon\Admin\Form\Field\File;
+use MAteDon\Admin\Form\Row;
 use MAteDon\Admin\Form\Tab;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
@@ -24,7 +26,6 @@ use Symfony\Component\HttpFoundation\Response;
  * Class Form.
  *
  * @method Field\Text           text($column, $label = '')
- * @method Field\CKEditor       ckeditor($column, $label = '')
  * @method Field\Checkbox       checkbox($column, $label = '')
  * @method Field\Radio          radio($column, $label = '')
  * @method Field\Select         select($column, $label = '')
@@ -39,11 +40,11 @@ use Symfony\Component\HttpFoundation\Response;
  * @method Field\Mobile         mobile($column, $label = '')
  * @method Field\Slider         slider($column, $label = '')
  * @method Field\Map            map($latitude, $longitude, $label = '')
+ * @method Field\Editor         editor($column, $label = '')
  * @method Field\File           file($column, $label = '')
  * @method Field\Image          image($column, $label = '')
  * @method Field\Date           date($column, $label = '')
  * @method Field\Datetime       datetime($column, $label = '')
- * @method Field\TimeStamp      timestamp($column, $label = '')
  * @method Field\Time           time($column, $label = '')
  * @method Field\Year           year($column, $label = '')
  * @method Field\Month          month($column, $label = '')
@@ -53,7 +54,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @method Field\Number         number($column, $label = '')
  * @method Field\Currency       currency($column, $label = '')
  * @method Field\HasMany        hasMany($relationName, $callback)
- * @method Field\SwitchField    switch ($column, $label = '')
+ * @method Field\SwitchField    switch($column, $label = '')
  * @method Field\Display        display($column, $label = '')
  * @method Field\Rate           rate($column, $label = '')
  * @method Field\Divide         divider()
@@ -66,13 +67,14 @@ use Symfony\Component\HttpFoundation\Response;
  * @method Field\MultipleImage  multipleImage($column, $label = '')
  * @method Field\MultipleFile   multipleFile($column, $label = '')
  * @method Field\Captcha        captcha($column, $label = '')
+ * @method Field\Listbox        listbox($column, $label = '')
  */
-class Form
+class Form implements Renderable
 {
     /**
      * Eloquent model of the form.
      *
-     * @var
+     * @var Model
      */
     protected $model;
 
@@ -141,6 +143,7 @@ class Form
      * @var array
      */
     protected $ignored = [];
+>>>>>>> Temporary merge branch 2
 
     /**
      * Collected field assets.
@@ -158,6 +161,13 @@ class Form
      * Remove flag in `has many` form.
      */
     const REMOVE_FLAG_NAME = '_remove_';
+
+    /**
+     * Field rows in form.
+     *
+     * @var array
+     */
+    public $rows = [];
 
     /**
      * Create a new form instance.
@@ -239,7 +249,7 @@ class Form
     /**
      * Use tab to split form.
      *
-     * @param string $title
+     * @param string  $title
      * @param Closure $content
      *
      * @return $this
@@ -340,25 +350,11 @@ class Form
             return $response;
         }
 
-        if ($response = $this->ajaxResponse(trans('admin::lang.save_succeeded'))) {
+        if ($response = $this->ajaxResponse(trans('admin.save_succeeded'))) {
             return $response;
         }
 
         return $this->redirectAfterStore();
-    }
-
-    /**
-     * Get RedirectResponse after store.
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    protected function redirectAfterStore()
-    {
-        admin_toastr(trans('admin::lang.save_succeeded'));
-
-        $url = Input::get(Builder::PREVIOUS_URL_KEY) ?: $this->resource(0);
-
-        return redirect($url);
     }
 
     /**
@@ -392,12 +388,11 @@ class Form
      */
     protected function prepare($data = [])
     {
-
         if (($response = $this->callSubmitted()) instanceof Response) {
             return $response;
         }
 
-        $this->inputs = $this->removeIgnoredFields($data);
+        $this->inputs = array_merge($this->removeIgnoredFields($data), $this->inputs);
 
         if (($response = $this->callSaving()) instanceof Response) {
             return $response;
@@ -491,9 +486,11 @@ class Form
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function update($id)
+    public function update($id, $data = null)
     {
-        $data = Input::all();
+        $data = ($data) ?: Input::all();
+
+        $isEditable = $this->isEditable($data);
 
         $data = $this->handleEditable($data);
 
@@ -502,18 +499,22 @@ class Form
         if ($this->handleOrderable($id, $data)) {
             return response([
                 'status'  => true,
-                'message' => trans('admin::lang.update_succeeded'),
+                'message' => trans('admin.update_succeeded'),
             ]);
         }
 
-        /* @var Model $this ->model */
+        /* @var Model $this->model */
         $this->model = $this->model->with($this->getRelations())->findOrFail($id);
 
         $this->setFieldOriginalValue();
 
         // Handle validation errors.
         if ($validationMessages = $this->validationMessages($data)) {
-            return back()->withInput()->withErrors($validationMessages);
+            if (!$isEditable) {
+                return back()->withInput()->withErrors($validationMessages);
+            } else {
+                return response()->json(['errors' => array_dot($validationMessages->getMessages())], 422);
+            }
         }
 
         if (($response = $this->prepare($data)) instanceof Response) {
@@ -524,7 +525,7 @@ class Form
             $updates = $this->prepareUpdate($this->updates);
 
             foreach ($updates as $column => $value) {
-                /* @var Model $this ->model */
+                /* @var Model $this->model */
                 $this->model->setAttribute($column, $value);
             }
 
@@ -537,25 +538,74 @@ class Form
             return $result;
         }
 
-        if ($response = $this->ajaxResponse(trans('admin::lang.update_succeeded'))) {
+        if ($response = $this->ajaxResponse(trans('admin.update_succeeded'))) {
             return $response;
         }
 
-        return $this->redirectAfterUpdate();
+        return $this->redirectAfterUpdate($id);
+    }
+
+    /**
+     * Get RedirectResponse after store.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    protected function redirectAfterStore()
+    {
+        $resourcesPath = $this->resource(0);
+
+        $key = $this->model->getKey();
+
+        return $this->redirectAfterSaving($resourcesPath, $key);
     }
 
     /**
      * Get RedirectResponse after update.
      *
+     * @param mixed $key
      * @return \Illuminate\Http\RedirectResponse
      */
-    protected function redirectAfterUpdate()
+    protected function redirectAfterUpdate($key)
     {
-        admin_toastr(trans('admin::lang.update_succeeded'));
+        $resourcesPath = $this->resource(-1);
 
-        $url = Input::get(Builder::PREVIOUS_URL_KEY) ?: $this->resource(-1);
+        return $this->redirectAfterSaving($resourcesPath, $key);
+    }
+
+    /**
+     * Get RedirectResponse after data saving.
+     *
+     * @param string $resourcesPath
+     * @param string $key
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    protected function redirectAfterSaving($resourcesPath, $key)
+    {
+        if (request('after-save') == 1) {
+            // continue editing
+            $url = rtrim($resourcesPath, '/') . "/{$key}/edit";
+        } elseif (request('after-save') == 2) {
+            // view resource
+            $url = rtrim($resourcesPath, '/') . "/{$key}";
+        } else {
+            $url = request(Builder::PREVIOUS_URL_KEY) ?: $resourcesPath;
+        }
+
+        admin_toastr(trans('admin.save_succeeded'));
 
         return redirect($url);
+    }
+
+    /**
+     * Check if request is from editable.
+     *
+     * @param array $input
+     *
+     * @return bool
+     */
+    protected function isEditable(array $input = [])
+    {
+        return array_key_exists('_editable', $input);
     }
 
     /**
@@ -598,7 +648,7 @@ class Form
     /**
      * Handle orderable update.
      *
-     * @param int $id
+     * @param int   $id
      * @param array $input
      *
      * @return bool
@@ -634,9 +684,10 @@ class Form
 
             $relation = $this->model->$name();
 
-            $hasDot = $relation instanceof \Illuminate\Database\Eloquent\Relations\HasOne;
+            $oneToOneRelation = $relation instanceof \Illuminate\Database\Eloquent\Relations\HasOne
+                || $relation instanceof \Illuminate\Database\Eloquent\Relations\MorphOne;
 
-            $prepared = $this->prepareUpdate([$name => $values], $hasDot);
+            $prepared = $this->prepareUpdate([$name => $values], $oneToOneRelation);
 
             if (empty($prepared)) {
                 continue;
@@ -665,6 +716,16 @@ class Form
 
                     $related->save();
                     break;
+                case \Illuminate\Database\Eloquent\Relations\MorphOne::class:
+                    $related = $this->model->$name;
+                    if (is_null($related)) {
+                        $related = $relation->make();
+                    }
+                    foreach ($prepared[$name] as $column => $value) {
+                        $related->setAttribute($column, $value);
+                    }
+                    $related->save();
+                    break;
                 case \Illuminate\Database\Eloquent\Relations\HasMany::class:
                 case \Illuminate\Database\Eloquent\Relations\MorphMany::class:
 
@@ -688,6 +749,7 @@ class Form
                         $instance->save();
                     }
 
+>>>>>>> Temporary merge branch 2
                     break;
             }
         }
@@ -697,7 +759,7 @@ class Form
      * Prepare input data for update.
      *
      * @param array $updates
-     * @param bool $hasDot If column name contains a 'dot', only has-one relation column use this.
+     * @param bool  $oneToOneRelation If column is one-to-one relation.
      *
      * @return array
      */
@@ -708,28 +770,25 @@ class Form
         foreach ($this->builder->fields() as $field) {
             $columns = $field->column();
 
-            if ($this->invalidColumn($columns, $hasDot)) {
+            // If column not in input array data, then continue.
+            if (!array_has($updates, $columns)) {
+                continue;
+            }
+
+            if ($this->invalidColumn($columns, $oneToOneRelation)) {
                 continue;
             }
 
             $value = $this->getDataByColumn($updates, $columns);
 
-            if ($value !== '' && $value !== '0' && empty($value)) {
-                continue;
-            }
+            $value = $field->prepare($value);
 
-            if (method_exists($field, 'prepare')) {
-                $value = $field->prepare($value);
-            }
-
-            if ($value !== $field->original()) {
-                if (is_array($columns)) {
-                    foreach ($columns as $name => $column) {
-                        array_set($prepared, $column, $value[$name]);
-                    }
-                } elseif (is_string($columns)) {
-                    array_set($prepared, $columns, $value);
+            if (is_array($columns)) {
+                foreach ($columns as $name => $column) {
+                    array_set($prepared, $column, $value[$name]);
                 }
+            } elseif (is_string($columns)) {
+                array_set($prepared, $columns, $value);
             }
         }
 
@@ -738,16 +797,15 @@ class Form
 
     /**
      * @param string|array $columns
-     * @param bool $hasDot
+     * @param bool         $oneToOneRelation
      *
      * @return bool
      */
-    public function invalidColumn($columns, $hasDot = false)
+    protected function invalidColumn($columns, $oneToOneRelation = false)
     {
-        foreach ((array)$columns as $column) {
-            if ((!$hasDot && Str::contains($column, '.')) ||
-                ($hasDot && !Str::contains($column, '.'))
-            ) {
+        foreach ((array) $columns as $column) {
+            if ((!$oneToOneRelation && Str::contains($column, '.')) ||
+                ($oneToOneRelation && !Str::contains($column, '.'))) {
                 return true;
             }
         }
@@ -774,9 +832,7 @@ class Form
                 continue;
             }
 
-            if (method_exists($field, 'prepare')) {
-                $inserts[$column] = $field->prepare($value);
-            }
+            $inserts[$column] = $field->prepare($value);
         }
 
         $prepared = [];
@@ -855,13 +911,13 @@ class Form
      */
     public function ignore($fields)
     {
-        $this->ignored = array_merge($this->ignored, (array)$fields);
+        $this->ignored = array_merge($this->ignored, (array) $fields);
 
         return $this;
     }
 
     /**
-     * @param array $data
+     * @param array        $data
      * @param string|array $columns
      *
      * @return array|mixed
@@ -912,6 +968,8 @@ class Form
      */
     protected function setFieldOriginalValue()
     {
+//        static::doNotSnakeAttributes($this->model);
+
         $values = $this->model->toArray();
 
         $this->builder->fields()->each(function (Field $field) use ($values) {
@@ -932,11 +990,29 @@ class Form
 
         $this->model = $this->model->with($relations)->findOrFail($id);
 
+//        static::doNotSnakeAttributes($this->model);
+
         $data = $this->model->toArray();
 
         $this->builder->fields()->each(function (Field $field) use ($data) {
-            $field->fill($data);
+            if (!in_array($field->column(), $this->ignored)) {
+                $field->fill($data);
+            }
         });
+    }
+
+    /**
+     * Don't snake case attributes.
+     *
+     * @param Model $model
+     *
+     * @return void
+     */
+    protected static function doNotSnakeAttributes(Model $model)
+    {
+        $class = get_class($model);
+
+        $class::$snakeAttributes = false;
     }
 
     /**
@@ -1005,7 +1081,9 @@ class Form
                 ) {
                     $relations[] = $relation;
                 }
-            } elseif (method_exists($this->model, $column)) {
+            } elseif (method_exists($this->model, $column) &&
+                !method_exists(Model::class, $column)
+            ) {
                 $relations[] = $column;
             }
         }
@@ -1038,7 +1116,7 @@ class Form
     public function setWidth($fieldWidth = 8, $labelWidth = 2)
     {
         $this->builder()->fields()->each(function ($field) use ($fieldWidth, $labelWidth) {
-            /* @var Field $field */
+            /* @var Field $field  */
             $field->setWidth($fieldWidth, $labelWidth);
         });
 
@@ -1062,6 +1140,34 @@ class Form
     }
 
     /**
+     * Set title for form.
+     *
+     * @param string $title
+     *
+     * @return $this
+     */
+    public function setTitle($title = '')
+    {
+        $this->builder()->setTitle($title);
+
+        return $this;
+    }
+
+    /**
+     * Add a row in form.
+     *
+     * @param Closure $callback
+     *
+     * @return $this
+     */
+    public function row(Closure $callback)
+    {
+        $this->rows[] = new Row($callback, $this);
+
+        return $this;
+    }
+
+    /**
      * Tools setting for form.
      *
      * @param Closure $callback
@@ -1077,6 +1183,8 @@ class Form
      * Disable form submit.
      *
      * @return $this
+     *
+     * @deprecated
      */
     public function disableSubmit()
     {
@@ -1089,12 +1197,24 @@ class Form
      * Disable form reset.
      *
      * @return $this
+     *
+     * @deprecated
      */
     public function disableReset()
     {
         $this->builder()->options(['enableReset' => false]);
 
         return $this;
+    }
+
+    /**
+     * Footer setting for form.
+     *
+     * @param Closure $callback
+     */
+    public function footer(Closure $callback)
+    {
+        call_user_func($callback, $this->builder()->getFooter());
     }
 
     /**
@@ -1110,6 +1230,10 @@ class Form
 
         if ($slice != 0) {
             $segments = array_slice($segments, 0, $slice);
+        }
+        // # fix #1768
+        if ($segments[0] == 'http:' && config('admin.secure') == true) {
+            $segments[0] = 'https:';
         }
 
         return implode('/', $segments);
@@ -1133,7 +1257,7 @@ class Form
      * Get or set input data.
      *
      * @param string $key
-     * @param null $value
+     * @param null   $value
      *
      * @return array|mixed
      */
@@ -1200,6 +1324,7 @@ class Form
             'multipleFile'   => \MAteDon\Admin\Form\Field\MultipleFile::class,
             'multipleImage'  => \MAteDon\Admin\Form\Field\MultipleImage::class,
             'captcha'        => \MAteDon\Admin\Form\Field\Captcha::class,
+            'listbox'        => \MAteDon\Admin\Form\Field\Listbox::class,
         ];
 
         foreach ($map as $abstract => $class) {
@@ -1323,15 +1448,5 @@ class Form
 
             return $element;
         }
-    }
-
-    /**
-     * Render the contents of the form when casting to string.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->render();
     }
 }
