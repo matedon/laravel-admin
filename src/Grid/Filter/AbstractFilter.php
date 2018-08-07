@@ -3,10 +3,29 @@
 namespace MAteDon\Admin\Grid\Filter;
 
 use MAteDon\Admin\Grid\Filter;
-use MAteDon\Admin\Grid\Filter\Field\DateTime;
-use MAteDon\Admin\Grid\Filter\Field\Select;
-use MAteDon\Admin\Grid\Filter\Field\Text;
+use MAteDon\Admin\Grid\Filter\Presenter\Checkbox;
+use MAteDon\Admin\Grid\Filter\Presenter\DateTime;
+use MAteDon\Admin\Grid\Filter\Presenter\MultipleSelect;
+use MAteDon\Admin\Grid\Filter\Presenter\Presenter;
+use MAteDon\Admin\Grid\Filter\Presenter\Radio;
+use MAteDon\Admin\Grid\Filter\Presenter\Select;
+use MAteDon\Admin\Grid\Filter\Presenter\Text;
 
+/**
+ * Class AbstractFilter.
+ *
+ * @method Text url()
+ * @method Text email()
+ * @method Text integer()
+ * @method Text decimal($options = [])
+ * @method Text currency($options = [])
+ * @method Text percentage($options = [])
+ * @method Text ip()
+ * @method Text mac()
+ * @method Text mobile($mask = '19999999999')
+ * @method Text inputmask($options = [], $icon = '')
+ * @method Text placeholder($placeholder = '')
+ */
 abstract class AbstractFilter
 {
     /**
@@ -17,7 +36,7 @@ abstract class AbstractFilter
     protected $id;
 
     /**
-     * Label of field.
+     * Label of presenter.
      *
      * @var string
      */
@@ -29,16 +48,21 @@ abstract class AbstractFilter
     protected $value;
 
     /**
+     * @var array|string
+     */
+    protected $defaultValue;
+
+    /**
      * @var string
      */
     protected $column;
 
     /**
-     * Field object.
+     * Presenter object.
      *
-     * @var
+     * @var Presenter
      */
-    protected $field;
+    protected $presenter;
 
     /**
      * Query for filter.
@@ -55,14 +79,7 @@ abstract class AbstractFilter
     /**
      * @var string
      */
-    protected $modelName;
-
-    /**
-     * Element attributes.
-     *
-     * @var array
-     */
-    protected $attributes = [];
+    protected $view = 'admin::filter.where';
 
     /**
      * AbstractFilter constructor.
@@ -70,25 +87,23 @@ abstract class AbstractFilter
      * @param $column
      * @param string $label
      */
-    public function __construct($column, $label = '', $modelName = '')
+    public function __construct($column, $label = '')
     {
-        $this->modelName = $modelName;
         $this->column = $column;
         $this->label = $this->formatLabel($label);
         $this->id = $this->formatId($column);
 
-        $this->setupField();
+        $this->setupDefaultPresenter();
     }
 
     /**
-     * Setup field.
+     * Setup default presenter.
      *
      * @return void
      */
-    public function setupField()
+    protected function setupDefaultPresenter()
     {
-        $this->field = new Text();
-        $this->field->setPlaceholder($this->label);
+        $this->setPresenter(new Text($this->label));
     }
 
     /**
@@ -100,10 +115,9 @@ abstract class AbstractFilter
      */
     protected function formatLabel($label)
     {
-        if ($label) {
-            return $label;
-        }
-        return admin_translate($this->modelName, $this->column);
+        $label = $label ?: ucfirst($this->column);
+
+        return str_replace(['.', '_'], ' ', $label);
     }
 
     /**
@@ -118,15 +132,17 @@ abstract class AbstractFilter
         $columns = explode('.', $column);
 
         if (count($columns) == 1) {
-            return $columns[0];
+            $name = $columns[0];
+        } else {
+            $name = array_shift($columns);
+            foreach ($columns as $column) {
+                $name .= "[$column]";
+            }
         }
 
-        $name = array_shift($columns);
-        foreach ($columns as $column) {
-            $name .= "[$column]";
-        }
+        $parenName = $this->parent->getName();
 
-        return $name;
+        return $parenName ? "{$parenName}_{$name}" : $name;
     }
 
     /**
@@ -136,7 +152,7 @@ abstract class AbstractFilter
      *
      * @return array|string
      */
-    public function formatId($columns)
+    protected function formatId($columns)
     {
         return str_replace('.', '_', $columns);
     }
@@ -218,15 +234,41 @@ abstract class AbstractFilter
      *
      * @param array $options
      *
-     * @return $this
+     * @return Select
      */
     public function select($options = [])
     {
-        $select = new Select($options);
+        return $this->setPresenter(new Select($options));
+    }
 
-        $select->setParent($this);
+    /**
+     * @param array $options
+     *
+     * @return MultipleSelect
+     */
+    public function multipleSelect($options = [])
+    {
+        return $this->setPresenter(new MultipleSelect($options));
+    }
 
-        return $this->setField($select);
+    /**
+     * @param array $options
+     *
+     * @return Radio
+     */
+    public function radio($options = [])
+    {
+        return $this->setPresenter(new Radio($options));
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return Checkbox
+     */
+    public function checkbox($options = [])
+    {
+        return $this->setPresenter(new Checkbox($options));
     }
 
     /**
@@ -234,31 +276,101 @@ abstract class AbstractFilter
      *
      * @param array $options
      *
-     * @return mixed
+     * @return DateTime
      */
     public function datetime($options = [])
     {
-        return $this->setField(new DateTime($this, $options));
+        return $this->setPresenter(new DateTime($options));
     }
 
     /**
-     * Set field object of filter.
+     * Date filter.
      *
-     * @param $field
+     * @return DateTime
      */
-    protected function setField($field)
+    public function date()
     {
-        return $this->field = $field;
+        return $this->datetime(['format' => 'YYYY-MM-DD']);
     }
 
     /**
-     * Get field object of filter.
+     * Time filter.
+     *
+     * @return DateTime
+     */
+    public function time()
+    {
+        return $this->datetime(['format' => 'HH:mm:ss']);
+    }
+
+    /**
+     * Day filter.
+     *
+     * @return DateTime
+     */
+    public function day()
+    {
+        return $this->datetime(['format' => 'DD']);
+    }
+
+    /**
+     * Month filter.
+     *
+     * @return DateTime
+     */
+    public function month()
+    {
+        return $this->datetime(['format' => 'MM']);
+    }
+
+    /**
+     * Year filter.
+     *
+     * @return DateTime
+     */
+    public function year()
+    {
+        return $this->datetime(['format' => 'YYYY']);
+    }
+
+    /**
+     * Set presenter object of filter.
+     *
+     * @param Presenter $presenter
      *
      * @return mixed
      */
-    public function field()
+    protected function setPresenter(Presenter $presenter)
     {
-        return $this->field;
+        $presenter->setParent($this);
+
+        return $this->presenter = $presenter;
+    }
+
+    /**
+     * Get presenter object of filter.
+     *
+     * @return Presenter
+     */
+    protected function presenter()
+    {
+        return $this->presenter;
+    }
+
+    /**
+     * Set default value for filter.
+     *
+     * @param null $default
+     *
+     * @return $this
+     */
+    public function default($default = null)
+    {
+        if ($default) {
+            $this->defaultValue = $default;
+        }
+
+        return $this;
     }
 
     /**
@@ -278,7 +390,9 @@ abstract class AbstractFilter
      */
     public function getColumn()
     {
-        return $this->column;
+        $parenName = $this->parent->getName();
+
+        return $parenName ? "{$parenName}_{$this->column}" : $this->column;
     }
 
     /**
@@ -294,7 +408,7 @@ abstract class AbstractFilter
     /**
      * Build conditions of filter.
      *
-     * @return array|mixed
+     * @return mixed
      */
     protected function buildCondition()
     {
@@ -304,7 +418,7 @@ abstract class AbstractFilter
             return [$this->query => func_get_args()];
         }
 
-        return call_user_func_array([$this, 'buildRelationCondition'], func_get_args());
+        return $this->buildRelationQuery(...func_get_args());
     }
 
     /**
@@ -312,46 +426,15 @@ abstract class AbstractFilter
      *
      * @return array
      */
-    protected function buildRelationCondition()
+    protected function buildRelationQuery()
     {
         $args = func_get_args();
 
         list($relation, $args[0]) = explode('.', $this->column);
 
-        return [
-            'whereHas' => [
-                $relation,
-                function ($relation) use ($args) {
-                    call_user_func_array([$relation, $this->query], $args);
-                }
-            ]
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    protected function fieldVars()
-    {
-        if (method_exists($this->field(), 'variables')) {
-            return $this->field()->variables();
-        }
-
-        return [];
-    }
-
-    /**
-     * Format the field attributes.
-     *
-     * @return string
-     */
-    protected function formatAttributes()
-    {
-        $html = [];
-        foreach ($this->attributes as $name => $value) {
-            $html[] = $name . '="' . e($value) . '"';
-        }
-        return implode(' ', $html);
+        return ['whereHas' => [$relation, function ($relation) use ($args) {
+            call_user_func_array([$relation, $this->query], $args);
+        }]];
     }
 
     /**
@@ -361,63 +444,13 @@ abstract class AbstractFilter
      */
     protected function variables()
     {
-        $variables = [
-            'id'         => $this->id,
-            'name'       => $this->formatName($this->column),
-            'label'      => $this->label,
-            'value'      => $this->value,
-            'attributes' => $this->formatAttributes(),
-            'field'      => $this->field(),
-        ];
-
-        return array_merge($variables, $this->fieldVars());
-    }
-
-
-    /**
-     * Set or get value of the field.
-     *
-     * @param null $value
-     *
-     * @return mixed
-     */
-    public function value($value = null)
-    {
-        if (is_null($value)) {
-            return is_null($this->value) ? '' : $this->value;
-        }
-
-        if (is_callable($value)) {
-            $this->value = $value;
-        } else {
-            $this->value = (string)$value;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Add html attributes to elements.
-     *
-     * @param array|string $attribute
-     * @param mixed $value
-     *
-     * @return $this
-     */
-    public function attribute($attribute, $value = null)
-    {
-        if (is_array($attribute)) {
-            $this->attributes = array_merge($this->attributes, $attribute);
-        } else {
-            $this->attributes[$attribute] = (string)$value;
-        }
-
-        return $this;
-    }
-
-    public function readOnly()
-    {
-        return $this->attribute('disabled', true);
+        return array_merge([
+            'id'        => $this->id,
+            'name'      => $this->formatName($this->column),
+            'label'     => $this->label,
+            'value'     => $this->value ?: $this->defaultValue,
+            'presenter' => $this->presenter(),
+        ], $this->presenter()->variables());
     }
 
     /**
@@ -427,13 +460,12 @@ abstract class AbstractFilter
      */
     public function render()
     {
-        $class = explode('\\', get_called_class());
-        $view = 'admin::filter.' . strtolower(end($class));
-
-        return view($view, $this->variables());
+        return view($this->view, $this->variables());
     }
 
     /**
+     * Render this filter.
+     *
      * @return \Illuminate\View\View|string
      */
     public function __toString()
@@ -451,10 +483,10 @@ abstract class AbstractFilter
      */
     public function __call($method, $params)
     {
-        if (method_exists($this->field, $method)) {
-            return call_user_func_array([$this->field, $method], $params);
+        if (method_exists($this->presenter, $method)) {
+            return $this->presenter()->{$method}(...$params);
         }
 
-        throw new \Exception('Method "' . $method . '" not exists.');
+        throw new \Exception('Method "'.$method.'" not exists.');
     }
 }

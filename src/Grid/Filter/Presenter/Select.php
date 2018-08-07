@@ -1,12 +1,11 @@
 <?php
 
-namespace MAteDon\Admin\Grid\Filter\Field;
+namespace MAteDon\Admin\Grid\Filter\Presenter;
 
 use MAteDon\Admin\Facades\Admin;
-use MAteDon\Admin\Grid\Filter\AbstractFilter;
 use Illuminate\Contracts\Support\Arrayable;
 
-class Select
+class Select extends Presenter
 {
     /**
      * Options of select.
@@ -16,9 +15,9 @@ class Select
     protected $options = [];
 
     /**
-     * @var AbstractFilter
+     * @var string
      */
-    protected $parent;
+    protected $script = '';
 
     /**
      * Select constructor.
@@ -31,42 +30,64 @@ class Select
     }
 
     /**
-     * Set parent filter.
-     *
-     * @param AbstractFilter $filter
-     */
-    public function setParent(AbstractFilter $filter)
-    {
-        $this->parent = $filter;
-    }
-
-    /**
      * Build options.
      *
      * @return array
      */
-    protected function buildOptions()
+    protected function buildOptions() : array
     {
-        $default = ['' => trans('admin::lang.choose')];
-
         if (is_string($this->options)) {
-            $this->loadAjaxOptions($this->options);
-
-            return $default;
+            $this->loadRemoteOptions($this->options);
         }
 
         if ($this->options instanceof \Closure) {
-            $this->options = $this->options->bindTo($this->parent);
-            $this->options = call_user_func($this->options, $this->parent->getValue());
+            $this->options = $this->options->call($this->filter, $this->filter->getValue());
         }
 
         if ($this->options instanceof Arrayable) {
             $this->options = $this->options->toArray();
         }
 
-        $options = is_array($this->options) ? $this->options : [];
+        if (empty($this->script)) {
+            $placeholder = trans('admin::lang.choose');
 
-        return $default + $options;
+            $this->script = <<<SCRIPT
+$(".{$this->getElementClass()}").select2({
+  placeholder: "$placeholder"
+});
+
+SCRIPT;
+        }
+
+        Admin::script($this->script);
+
+        return is_array($this->options) ? $this->options : [];
+    }
+
+    /**
+     * Load options from remote.
+     *
+     * @param string $url
+     * @param array  $parameters
+     * @param array  $options
+     *
+     * @return $this
+     */
+    protected function loadRemoteOptions($url, $parameters = [], $options = [])
+    {
+        $ajaxOptions = [
+            'url' => $url.'?'.http_build_query($parameters),
+        ];
+
+        $ajaxOptions = json_encode(array_merge($ajaxOptions, $options));
+
+        $this->script = <<<EOT
+
+$.ajax($ajaxOptions).done(function(data) {
+  $(".{$this->getElementClass()}").select2({data: data});
+});
+
+EOT;
     }
 
     /**
@@ -74,11 +95,14 @@ class Select
      *
      * @param string $resourceUrl
      */
-    protected function loadAjaxOptions($resourceUrl)
+    public function ajax($resourceUrl)
     {
-        $script = <<<EOT
+        $placeholder = trans('admin.choose');
+
+        $this->script = <<<EOT
 
 $(".{$this->getElementClass()}").select2({
+  placeholder: "$placeholder",
   ajax: {
     url: "$resourceUrl",
     dataType: 'json',
@@ -108,14 +132,12 @@ $(".{$this->getElementClass()}").select2({
 });
 
 EOT;
-
-        Admin::script($script);
     }
 
     /**
      * @return array
      */
-    public function variables()
+    public function variables() : array
     {
         return [
             'options' => $this->buildOptions(),
@@ -126,17 +148,9 @@ EOT;
     /**
      * @return string
      */
-    protected function getElementClass()
+    protected function getElementClass() : string
     {
-        return str_replace('.', '_', $this->parent->getColumn());
-    }
-
-    /**
-     * @return string
-     */
-    public function name()
-    {
-        return 'select';
+        return str_replace('.', '_', $this->filter->getColumn());
     }
 
     /**
@@ -149,9 +163,9 @@ EOT;
      *
      * @return $this
      */
-    public function load($target, $resourceUrl, $idField = 'id', $textField = 'text')
+    public function load($target, $resourceUrl, $idField = 'id', $textField = 'text') : self
     {
-        $column = $this->parent->getColumn();
+        $column = $this->filter->getColumn();
 
         $script = <<<EOT
 
@@ -183,7 +197,7 @@ EOT;
      *
      * @return mixed
      */
-    protected function getClass($target)
+    protected function getClass($target) : string
     {
         return str_replace('.', '_', $target);
     }

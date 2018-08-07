@@ -2,19 +2,19 @@
 
 namespace MAteDon\Admin\Grid\Filter;
 
-class Lt extends AbstractFilter
+class In extends AbstractFilter
 {
     /**
      * {@inheritdoc}
      */
-    protected $view = 'admin::filter.lt';
+    protected $query = 'whereIn';
 
     /**
      * Get condition of this filter.
      *
      * @param array $inputs
      *
-     * @return array|mixed|void
+     * @return mixed
      */
     public function condition($inputs)
     {
@@ -24,8 +24,8 @@ class Lt extends AbstractFilter
             return;
         }
 
-        $this->value = $value;
+        $this->value = (array) $value;
 
-        return $this->buildCondition($this->column, '<=', $this->value);
+        return $this->buildCondition($this->column, $this->value);
     }
 }
