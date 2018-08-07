@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Form;
+namespace MAteDon\Admin\Form;
 
-use Encore\Admin\Admin;
+use MAteDon\Admin\Admin;
 use Illuminate\Contracts\Support\Renderable;
 
 class Footer implements Renderable

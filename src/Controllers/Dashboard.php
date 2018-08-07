@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Controllers;
+namespace MAteDon\Admin\Controllers;
 
-use Encore\Admin\Admin;
+use MAteDon\Admin\Admin;
 
 class Dashboard
 {

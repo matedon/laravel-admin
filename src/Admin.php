@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Admin;
+namespace MAteDon\Admin;
 
 use Closure;
 use MAteDon\Admin\Auth\Database\Menu;
@@ -46,7 +46,7 @@ class Admin
      * @param $model
      * @param Closure $callable
      *
-     * @return \Encore\Admin\Grid
+     * @return \MAteDon\Admin\Grid
      */
     public function grid($model, Closure $callable)
     {
@@ -57,7 +57,7 @@ class Admin
      * @param $model
      * @param Closure $callable
      *
-     * @return \Encore\Admin\Form
+     * @return \MAteDon\Admin\Form
      */
     public function form($model, Closure $callable)
     {
@@ -69,7 +69,7 @@ class Admin
      *
      * @param $model
      *
-     * @return \Encore\Admin\Tree
+     * @return \MAteDon\Admin\Tree
      */
     public function tree($model, Closure $callable = null)
     {
@@ -92,7 +92,7 @@ class Admin
     /**
      * @param Closure $callable
      *
-     * @return \Encore\Admin\Layout\Content
+     * @return \MAteDon\Admin\Layout\Content
      */
     public function content(Closure $callable = null)
     {
@@ -226,7 +226,7 @@ class Admin
     /**
      * Get navbar object.
      *
-     * @return \Encore\Admin\Widgets\Navbar
+     * @return \MAteDon\Admin\Widgets\Navbar
      */
     public function getNavbar()
     {

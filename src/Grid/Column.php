@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Admin\Grid;
+namespace MAteDon\Admin\Grid;
 
 use Closure;
 use MAteDon\Admin\Grid;

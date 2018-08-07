@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Console;
+namespace MAteDon\Admin\Console;
 
-use Encore\Admin\Admin;
+use MAteDon\Admin\Admin;
 use Illuminate\Console\Command;
 
 class ImportCommand extends Command

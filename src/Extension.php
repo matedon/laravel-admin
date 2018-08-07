@@ -1,9 +1,9 @@
 <?php
 
-namespace Encore\Admin;
+namespace MAteDon\Admin;
 
-use Encore\Admin\Auth\Database\Menu;
-use Encore\Admin\Auth\Database\Permission;
+use MAteDon\Admin\Auth\Database\Menu;
+use MAteDon\Admin\Auth\Database\Permission;
 use Illuminate\Support\Facades\Route;
 
 abstract class Extension

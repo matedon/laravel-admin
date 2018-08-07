@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Admin;
+namespace MAteDon\Admin;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -11,12 +11,12 @@ class AdminServiceProvider extends ServiceProvider
      * @var array
      */
     protected $commands = [
-        'Encore\Admin\Console\MakeCommand',
-        'Encore\Admin\Console\FormCommand',
-        'Encore\Admin\Console\MenuCommand',
-        'Encore\Admin\Console\InstallCommand',
-        'Encore\Admin\Console\UninstallCommand',
-        'Encore\Admin\Console\ImportCommand',
+        'MAteDon\Admin\Console\MakeCommand',
+        'MAteDon\Admin\Console\FormCommand',
+        'MAteDon\Admin\Console\MenuCommand',
+        'MAteDon\Admin\Console\InstallCommand',
+        'MAteDon\Admin\Console\UninstallCommand',
+        'MAteDon\Admin\Console\ImportCommand',
     ];
 
     /**
@@ -25,11 +25,11 @@ class AdminServiceProvider extends ServiceProvider
      * @var array
      */
     protected $routeMiddleware = [
-        'admin.auth'       => \Encore\Admin\Middleware\Authenticate::class,
-        'admin.pjax'       => \Encore\Admin\Middleware\Pjax::class,
-        'admin.log'        => \Encore\Admin\Middleware\LogOperation::class,
-        'admin.permission' => \Encore\Admin\Middleware\Permission::class,
-        'admin.bootstrap'  => \Encore\Admin\Middleware\Bootstrap::class,
+        'admin.auth'       => \MAteDon\Admin\Middleware\Authenticate::class,
+        'admin.pjax'       => \MAteDon\Admin\Middleware\Pjax::class,
+        'admin.log'        => \MAteDon\Admin\Middleware\LogOperation::class,
+        'admin.permission' => \MAteDon\Admin\Middleware\Permission::class,
+        'admin.bootstrap'  => \MAteDon\Admin\Middleware\Bootstrap::class,
     ];
 
     /**

@@ -1,9 +1,9 @@
 <?php
 
-namespace Encore\Admin\Middleware;
+namespace MAteDon\Admin\Middleware;
 
-use Encore\Admin\Auth\Permission as Checker;
-use Encore\Admin\Facades\Admin;
+use MAteDon\Admin\Auth\Permission as Checker;
+use MAteDon\Admin\Facades\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 

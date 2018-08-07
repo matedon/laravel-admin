@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Admin\Form;
+namespace MAteDon\Admin\Form;
 
 use MAteDon\Admin\Admin;
 use MAteDon\Admin\Form;

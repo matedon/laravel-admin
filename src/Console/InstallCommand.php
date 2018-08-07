@@ -50,7 +50,7 @@ class InstallCommand extends Command
         $this->call('migrate');
 
         if (Administrator::count() == 0) {
-            $this->call('db:seed', ['--class' => \Encore\Admin\Auth\Database\AdminTablesSeeder::class]);
+            $this->call('db:seed', ['--class' => \MAteDon\Admin\Auth\Database\AdminTablesSeeder::class]);
         }
     }
 

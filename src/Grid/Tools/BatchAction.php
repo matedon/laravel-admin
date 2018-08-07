@@ -2,7 +2,7 @@
 
 namespace MAteDon\Admin\Grid\Tools;
 
-use Encore\Admin\Grid;
+use MAteDon\Admin\Grid;
 
 abstract class BatchAction
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Encore\Admin;
+namespace MAteDon\Admin;
 
-use Encore\Admin\Show\Divider;
-use Encore\Admin\Show\Field;
-use Encore\Admin\Show\Panel;
-use Encore\Admin\Show\Relation;
+use MAteDon\Admin\Show\Divider;
+use MAteDon\Admin\Show\Field;
+use MAteDon\Admin\Show\Panel;
+use MAteDon\Admin\Show\Relation;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

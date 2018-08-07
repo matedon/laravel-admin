@@ -1,9 +1,9 @@
 <?php
 
-namespace Encore\Admin\Show;
+namespace MAteDon\Admin\Show;
 
-use Encore\Admin\Grid;
-use Encore\Admin\Show;
+use MAteDon\Admin\Grid;
+use MAteDon\Admin\Show;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

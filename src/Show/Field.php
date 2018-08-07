@@ -1,8 +1,8 @@
 <?php
 
-namespace Encore\Admin\Show;
+namespace MAteDon\Admin\Show;
 
-use Encore\Admin\Show;
+use MAteDon\Admin\Show;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Model;

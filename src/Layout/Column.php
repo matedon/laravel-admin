@@ -2,7 +2,7 @@
 
 namespace MAteDon\Admin\Layout;
 
-use Encore\Admin\Grid;
+use MAteDon\Admin\Grid;
 use Illuminate\Contracts\Support\Renderable;
 
 class Column implements Buildable

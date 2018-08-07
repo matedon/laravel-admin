@@ -1,6 +1,6 @@
 <?php
 
-namespace Encore\Admin;
+namespace MAteDon\Admin;
 
 use Closure;
 use MAteDon\Admin\Exception\Handler;
